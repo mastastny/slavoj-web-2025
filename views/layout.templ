@@ -1,0 +1,19 @@
+package views
+
+templ Layout(title string) {
+	<html>
+		<head>
+			<title>{title}</title>
+			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+			<link rel="stylesheet" href="css/page.css">
+			@ReservationHead()
+		</head>
+		<body>
+            @Menu()
+            <div id="centre-page" class="page" hx-on--after-swap="initCalendar()">
+                @About()
+            </div>
+			@Footer()
+		</body>
+	</html>
+}

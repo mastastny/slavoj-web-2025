@@ -1,0 +1,118 @@
+package views
+
+//import "github.com/a-h/templ"
+
+
+templ ReservationHead() {
+ <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
+
+ <script>
+ window.currentCourtId = 1; // default
+
+    function resetCalendar(id) {
+        console.log("reset kalendare")
+
+        const el = document.getElementById('calendar');
+        console.log("a" + el.dataset.initialized)
+        if (el && el.dataset.initialized) {
+            el.dataset.initialized = "";
+        }
+        console.log("b" + el.dataset.initialized)
+        window.currentCourtId = id
+        initCalendar()
+    }
+
+   function initCalendar() {
+     const el = document.getElementById('calendar');
+     if (!el || el.dataset.initialized) return; // už inicializovaný nebo není na stránce
+     const calendar = new FullCalendar.Calendar(el, {
+       initialView: 'timeGridWeek',
+       locale: 'cs',
+       timeZone: 'Europe/Prague',
+       slotMinTime: '08:00:00',
+       slotMaxTime: '22:00:00',
+       slotDuration: '01:00:00',
+       selectable: true,
+       events: {
+         url: '/api/events',
+         extraParams: () => ({ court_id: window.currentCourtId })
+       },
+       select: function (info) {
+         console.log('Vybral jsi slot:', info.startStr, info.endStr);
+         // tady můžeš spustit htmx GET na formulář
+       }
+     });
+
+     calendar.render();
+     el.dataset.initialized = "true"; // označ element, aby se znovu nespustil
+   }
+
+   // inicializace při prvním načtení
+   document.addEventListener('DOMContentLoaded', initCalendar);
+
+   // inicializace při každém HTMX swapu do #centre-page
+   document.body.addEventListener('htmx:afterSwap', function (evt) {
+     if (evt.target.id === "centre-page") {
+       initCalendar();
+     }
+   });
+ </script>
+
+ <link rel="stylesheet" href="css/reservation.css">
+
+}
+
+
+templ Areal() {
+<div class="areal">
+  <img src="/images/areal.png" alt="Sportoviště" class="areal_img">
+
+    <div class="areal_overlay">
+    <!-- ZÓNA 1: obdélník -->
+      <button
+        class="zone zone--rect hriste-1"
+        aria-label="Hřiště 1"
+        hx-on:click="resetCalendar(1); document.getElementById('field-name').innerText='Hřiště 1'"
+        >
+        Hřiště 1
+      </button>
+<!--      hx-on:click="document.getElementById('field-name').innerText='Hřiště 1'; initCalendar()"-->
+        <button
+          class="zone zone--rect hriste-2"
+          aria-label="Hřiště 2"
+          hx-on:click="resetCalendar(2); document.getElementById('field-name').innerText='Hřiště 2'"
+          >
+          Hřiště 2
+        </button>
+        <!--          hx-on:click="window.currentCourtId=2; el.dataset.initialized=false; initCalendar(); document.getElementById('field-name').innerText='Hřiště 2'"-->
+      <button
+        class="zone zone--poly hriste-3"
+        aria-label="Hřiště 3"
+        hx-on:click="resetCalendar(3); document.getElementById('field-name').innerText='Hřiště 3'"
+        >
+        Hřiště 3
+      </button>
+    </div>
+</div>
+
+<!-- todo tady by se dalo na hoover vykresilt info o hristich -->
+<div id="detail"></div>
+
+}
+
+
+templ Form() {
+
+}
+
+
+
+templ Reservation() {
+    @Areal()
+    <div >
+        <h1 id="field-name" >Calendar</h1>
+    </div>
+    <div id="form-div"></div>
+    <div id='calendar'></div>
+}
+

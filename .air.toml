@@ -1,0 +1,39 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+# Vygeneruj templaty před buildem
+pre_cmd = ["templ generate"]
+
+# Build binárky
+cmd = "go build -o ./tmp/main ."
+bin = "tmp/main"
+full_bin = "tmp/main"
+
+# Sledujeme zdrojáky + templ + statiku
+include_ext = [
+    "go",
+    "templ",
+    "css",
+    "js",
+    "svg",
+    "png",
+    "jpg",
+    "jpeg",
+    "webp",
+    "ico",
+    "gif"
+]
+
+# Ignorované složky
+exclude_dir = ["tmp", "vendor"]
+
+# 💡 DŮLEŽITÉ: nehlídej generované soubory z templu
+exclude_regex = [
+    "_templ\\.go$"
+]
+
+# Volitelně zklidní „burst“ ukládání
+# delay = 100
+
+log_color = "true"

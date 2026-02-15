@@ -59,7 +59,15 @@ func Areal() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"areal\"><img src=\"/images/areal.png\" alt=\"Sportoviště\" class=\"areal_img\"><div class=\"areal_overlay\"><!-- ZÓNA 1: obdélník --><button class=\"zone zone--rect hriste-1\" aria-label=\"Hřiště 1\" hx-on:click=\"resetCalendar(1); document.getElementById('field-name').innerText='Hřiště 1'\">Hřiště 1</button><!--      hx-on:click=\"document.getElementById('field-name').innerText='Hřiště 1'; initCalendar()\"--><button class=\"zone zone--rect hriste-2\" aria-label=\"Hřiště 2\" hx-on:click=\"resetCalendar(2); document.getElementById('field-name').innerText='Hřiště 2'\">Hřiště 2</button><!--          hx-on:click=\"window.currentCourtId=2; el.dataset.initialized=false; initCalendar(); document.getElementById('field-name').innerText='Hřiště 2'\"--><button class=\"zone zone--poly hriste-3\" aria-label=\"Hřiště 3\" hx-on:click=\"resetCalendar(3); document.getElementById('field-name').innerText='Hřiště 3'\">Hřiště 3</button></div></div><!-- todo tady by se dalo na hoover vykresilt info o hristich --><div id=\"detail\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<section class=\"section\" id=\"booking-times\"><div class=\"container\"><div class=\"row\"><div class=\"col-lg-12\"><h4 class=\"mb-3\">Choose your time</h4><div class=\"d-flex flex-wrap\"><button class=\"timeslot main-button mr-2 mb-2\" data-date=\"2025-09-16\" data-time=\"18:00\" data-area=\"Court A\" data-price=\"12\">18:00 – Court A</button> <button class=\"timeslot main-button mr-2 mb-2\" data-date=\"2025-09-16\" data-time=\"19:00\" data-area=\"Court B\" data-price=\"12\">19:00 – Court B</button> <button class=\"timeslot main-button mr-2 mb-2\" data-date=\"2025-09-16\" data-time=\"20:00\" data-area=\"Court C\" data-price=\"14\">20:00 – Court C</button></div></div></div></div></section>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = Modal().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"areal\"><img src=\"/images/areal.png\" alt=\"Sportoviště\" class=\"areal_img\"><div class=\"areal_overlay\"><!-- ZÓNA 1: obdélník --><button class=\"zone zone--rect hriste-1\" aria-label=\"Hřiště 1\" hx-on:click=\"resetCalendar(1); document.getElementById('field-name').innerText='Hřiště 1'\">Hřiště 1</button><!--      hx-on:click=\"document.getElementById('field-name').innerText='Hřiště 1'; initCalendar()\"--><button class=\"zone zone--rect hriste-2\" aria-label=\"Hřiště 2\" hx-on:click=\"resetCalendar(2); document.getElementById('field-name').innerText='Hřiště 2'\">Hřiště 2</button><!--          hx-on:click=\"window.currentCourtId=2; el.dataset.initialized=false; initCalendar(); document.getElementById('field-name').innerText='Hřiště 2'\"--><button class=\"zone zone--poly hriste-3\" aria-label=\"Hřiště 3\" hx-on:click=\"resetCalendar(3); document.getElementById('field-name').innerText='Hřiště 3'\">Hřiště 3</button></div></div><!-- todo tady by se dalo na hoover vykresilt info o hristich --><div id=\"detail\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -113,11 +121,15 @@ func Reservation() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"page\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = Areal().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div><h1 id=\"field-name\">Calendar</h1></div><div id=\"form-div\"></div><div id=\"calendar\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div><h1 id=\"field-name\">Calendar</h1></div><div id=\"form-div\"></div><div id=\"calendar\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

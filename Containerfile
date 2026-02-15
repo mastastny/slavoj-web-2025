@@ -20,8 +20,7 @@ RUN apk --no-cache add ca-certificates
 
 COPY --from=builder /workdir/bin/server ./server
 COPY --from=builder /workdir/static ./static
-COPY --from=builder /workdir/init.sql ./init.sql
 
 EXPOSE 8080
 
-ENTRYPOINT ["./server"]
+ENTRYPOINT ["/rundir/server"]

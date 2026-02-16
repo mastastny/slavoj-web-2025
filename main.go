@@ -3,14 +3,22 @@ package main
 import (
 	//"net/http"
 
+	"context"
 	"database/sql"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 	"github.com/mastastny/slavoj-web-2025/views"
+
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
+	echoadapter "github.com/awslabs/aws-lambda-go-api-proxy/echo"
 )
+
+var echoLambda *echoadapter.EchoLambdaV2
 
 func GetHome(c echo.Context) error {
 	//return c.Render(http.StatusOK, "home", nil)
@@ -127,6 +135,22 @@ func main() {
 
 	e.GET("/api/events", server.GetEvents)
 
-	e.Logger.Fatal(e.Start(":8080"))
+	// 2. Detect if running in AWS Lambda environment
+	if os.Getenv("AWS_LAMBDA_FUNCTION_NAME") != "" {
+		// We are in Lambda, so do not start Echo in the usual way.
+		// Initialize the Echo adapter for API Gateway V2 (HTTP API)
+		echoLambda = echoadapter.NewV2(e)
+		// Start the Lambda event processing loop with our handler function
+		lambda.Start(handler)
+	} else {
+		// Not in Lambda (running locally or in another environment), start Echo normally
+		e.Logger.Fatal(e.Start(":8080"))
+	}
 
+}
+
+// 3. Lambda handler function for API Gateway HTTP API (v2) events
+func handler(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
+	// Proxy the incoming API Gateway request to the Echo instance and return the response
+	return echoLambda.ProxyWithContext(ctx, req)
 }

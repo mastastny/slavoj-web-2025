@@ -3,12 +3,15 @@ package main
 import (
 	"context"
 	"database/sql"
-	"io"
+	_ "embed"
 	"os"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
+
+//go:embed init.sql
+var initSQL string
 
 type Event struct {
 	Title string    `json:"title"`
@@ -19,13 +22,17 @@ type Event struct {
 
 func Init() *sql.DB {
 	// 1) Otevři DB (soubor vedle binárky; přepni dle potřeby)
-	db, err := sql.Open("sqlite3", "file:club.sqlite?_foreign_keys=on&_busy_timeout=5000")
+	dbPath := os.Getenv("DATABASE_PATH")
+	if dbPath == "" {
+		dbPath = "club.sqlite"
+	}
+	db, err := sql.Open("sqlite3", "file:"+dbPath+"?_foreign_keys=on&_busy_timeout=5000")
 	if err != nil {
 		panic(err)
 	}
 
 	// 2) Spusť migraci
-	if err := runMigrations(db, "init.sql"); err != nil {
+	if err := runMigrations(db); err != nil {
 		panic(err)
 	}
 
@@ -70,19 +77,10 @@ func Init() *sql.DB {
 	return db
 }
 
-func runMigrations(db *sql.DB, path string) error {
-	f, err := os.Open(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	sqlBytes, err := io.ReadAll(f)
-	if err != nil {
-		return err
-	}
+func runMigrations(db *sql.DB) error {
 	// Spustíme v jedné transakci
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	_, err = db.ExecContext(ctx, string(sqlBytes))
+	_, err := db.ExecContext(ctx, initSQL)
 	return err
 }

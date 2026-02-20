@@ -61,6 +61,11 @@ func GetDocuments(c echo.Context) error {
 	return renderHTML(c, page)
 }
 
+func GetHomeContent(c echo.Context) error {
+	page := views.Home()
+	return renderHTML(c, page)
+}
+
 // helper to render templ components in Echo
 func renderHTML(c echo.Context, comp templ.Component) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMETextHTMLCharsetUTF8)
@@ -138,6 +143,7 @@ func main() {
 	e.GET("/contacts", GetContacts)
 	e.GET("/modal", GetModal)
 	e.GET("/documents", GetDocuments)
+	e.GET("/home", GetHomeContent)
 
 	e.GET("/api/events", server.GetEvents)
 

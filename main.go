@@ -56,6 +56,11 @@ func GetModal(c echo.Context) error {
 	return renderHTML(c, page)
 }
 
+func GetDocuments(c echo.Context) error {
+	page := views.Documents()
+	return renderHTML(c, page)
+}
+
 // helper to render templ components in Echo
 func renderHTML(c echo.Context, comp templ.Component) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMETextHTMLCharsetUTF8)
@@ -132,6 +137,7 @@ func main() {
 	e.GET("/reservation", GetReservation)
 	e.GET("/contacts", GetContacts)
 	e.GET("/modal", GetModal)
+	e.GET("/documents", GetDocuments)
 
 	e.GET("/api/events", server.GetEvents)
 
@@ -144,7 +150,7 @@ func main() {
 		lambda.Start(handler)
 	} else {
 		// Not in Lambda (running locally or in another environment), start Echo normally
-		e.Logger.Fatal(e.Start(":8080"))
+		e.Logger.Fatal(e.Start(":8081"))
 	}
 
 }

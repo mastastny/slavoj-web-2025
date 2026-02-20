@@ -29,7 +29,7 @@ func Menu() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<button hx-get=\"/about\" hx-target=\"#centre-page\">O nás</button> <button hx-get=\"/areals\" hx-target=\"#centre-page\">Sportoviště</button> <button hx-get=\"/contacts\" hx-target=\"#centre-page\">Kontakty</button> <button hx-get=\"/reservation\" hx-target=\"#centre-page\">Rezervace</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<button hx-get=\"/about\" hx-target=\"#centre-page\">O nás</button> <button hx-get=\"/areals\" hx-target=\"#centre-page\">Sportoviště</button> <button hx-get=\"/contacts\" hx-target=\"#centre-page\">Kontakty</button> <button hx-get=\"/reservation\" hx-target=\"#centre-page\">Rezervace</button> <button hx-get=\"/documents\" hx-target=\"#centre-page\">Dokumenty</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

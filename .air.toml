@@ -6,7 +6,7 @@ tmp_dir = "tmp"
 pre_cmd = ["templ generate"]
 
 # Build binárky
-cmd = "go build -o ./tmp/main ."
+cmd = "go build -o ./tmp/main ./cmd/server/"
 bin = "tmp/main"
 full_bin = "tmp/main"
 

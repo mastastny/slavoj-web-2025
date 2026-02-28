@@ -7,3 +7,7 @@ CLAUDE.md
 templatemo*/
 templatemo*
 *.sqlite
+
+# .env file
+.env
+

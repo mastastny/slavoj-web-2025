@@ -4,8 +4,8 @@ playground.html
 .idea/
 
 CLAUDE.md
-templatemo*/
-templatemo*
+/templatemo*/
+/templatemo*
 *.sqlite
 
 # .env file

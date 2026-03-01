@@ -30,6 +30,7 @@ func main() {
 	e.GET("/about", handlers.GetAbout)
 	e.GET("/areals", handlers.GetAreals)
 	e.GET("/reservation", handlers.GetReservation)
+	e.GET("/membership", handlers.GetMembership)
 	e.GET("/contacts", handlers.GetContacts)
 	e.GET("/modal", handlers.GetModal)
 	e.GET("/documents", handlers.GetDocuments)

@@ -17,6 +17,10 @@ func GetAreals(c echo.Context) error {
 	return renderHTML(c, views.Areals())
 }
 
+func GetMembership(c echo.Context) error {
+	return renderHTML(c, views.Membership())
+}
+
 func GetContacts(c echo.Context) error {
 	return renderHTML(c, views.Contacts())
 }

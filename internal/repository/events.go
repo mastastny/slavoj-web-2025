@@ -2,28 +2,29 @@ package repository
 
 import (
 	"database/sql"
+	_ "embed"
 	"time"
 
 	"github.com/mastastny/slavoj-web-2025/internal/models"
 )
 
-type EventRepository struct {
-	DB *sql.DB
+//go:embed queries/get_events_by_court_and_range.sql
+var getEventsByCourtAndRange string
+
+type EventRepository interface {
+	GetEventsByCourtAndRange(courtID, startStr, endStr string) ([]models.Event, error)
 }
 
-func NewEventRepository(db *sql.DB) *EventRepository {
-	return &EventRepository{DB: db}
+type sqliteEventRepository struct {
+	db *sql.DB
 }
 
-func (r *EventRepository) GetEventsByCourtAndRange(courtID, startStr, endStr string) ([]models.Event, error) {
-	rows, err := r.DB.Query(`
-		SELECT name, start_at, end_at
-		FROM reservations
-		WHERE court_id = ?
-		  AND start_at >= ?
-		  AND end_at   <= ?
-		ORDER BY start_at
-	`, courtID, startStr, endStr)
+func NewEventRepository(db *sql.DB) EventRepository {
+	return &sqliteEventRepository{db: db}
+}
+
+func (r *sqliteEventRepository) GetEventsByCourtAndRange(courtID, startStr, endStr string) ([]models.Event, error) {
+	rows, err := r.db.Query(getEventsByCourtAndRange, courtID, startStr, endStr)
 	if err != nil {
 		return nil, err
 	}

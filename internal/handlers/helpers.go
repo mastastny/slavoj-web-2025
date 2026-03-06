@@ -10,7 +10,7 @@ import (
 
 type Server struct {
 	DB   *sql.DB
-	Repo *repository.EventRepository
+	Repo repository.EventRepository
 }
 
 func NewServer(db *sql.DB) *Server {

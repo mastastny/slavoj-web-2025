@@ -64,29 +64,6 @@ templ ReservationHead() {
 
 
 templ Areal() {
-<section class="section" id="booking-times">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <h4 class="mb-3">Choose your time</h4>
-                <div class="d-flex flex-wrap">
-                    <button class="timeslot main-button mr-2 mb-2"
-                            data-date="2025-09-16" data-time="18:00" data-area="Court A" data-price="12">
-                        18:00 – Court A
-                    </button>
-                    <button class="timeslot main-button mr-2 mb-2"
-                            data-date="2025-09-16" data-time="19:00" data-area="Court B" data-price="12">
-                        19:00 – Court B
-                    </button>
-                    <button class="timeslot main-button mr-2 mb-2"
-                            data-date="2025-09-16" data-time="20:00" data-area="Court C" data-price="14">
-                        20:00 – Court C
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 @Modal()
 
 <div class="areal">
@@ -120,6 +97,30 @@ templ Areal() {
     </div>
 </div>
 
+<section class="section" id="booking-times">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h4 class="mb-3">Vyberte čas</h4>
+                <div class="d-flex flex-wrap">
+                    <button class="timeslot main-button mr-2 mb-2"
+                            data-date="2025-09-16" data-time="18:00" data-area="Hřiště A" data-price="12">
+                        18:00 – Hřiště A
+                    </button>
+                    <button class="timeslot main-button mr-2 mb-2"
+                            data-date="2025-09-16" data-time="19:00" data-area="Hřiště B" data-price="12">
+                        19:00 – Hřiště B
+                    </button>
+                    <button class="timeslot main-button mr-2 mb-2"
+                            data-date="2025-09-16" data-time="20:00" data-area="Hřiště C" data-price="14">
+                        20:00 – Hřiště C
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- todo tady by se dalo na hoover vykresilt info o hristich -->
 <div id="detail"></div>
 
@@ -136,7 +137,7 @@ templ Reservation() {
 <div class="page">
     @Areal()
     <div >
-        <h1 id="field-name" >Calendar</h1>
+        <h1 id="field-name" >Kalendář</h1>
     </div>
     <div id="form-div"></div>
     <div id='calendar'></div>

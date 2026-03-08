@@ -23,16 +23,20 @@ templ Modal() {
                                 <div class="font-weight-bold" id="bk-date-display">—</div>
                             </div>
                             <div>
-                                <div class="small text-muted">Čas</div>
-                                <div class="font-weight-bold" id="bk-time-display">—</div>
+                                <div class="small text-muted">Od</div>
+                                <div class="font-weight-bold" id="bk-start-display">—</div>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Do</div>
+                                <div class="font-weight-bold" id="bk-end-display">—</div>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Délka</div>
+                                <div class="font-weight-bold" id="bk-duration-display">—</div>
                             </div>
                             <div>
                                 <div class="small text-muted">Hřiště</div>
                                 <div class="font-weight-bold" id="bk-area-display">—</div>
-                            </div>
-                            <div>
-                                <div class="small text-muted">Cena</div>
-                                <div class="font-weight-bold" id="bk-price-display">—</div>
                             </div>
                         </div>
                     </div>
@@ -40,36 +44,9 @@ templ Modal() {
 
                     <!-- Hidden machine values for submission -->
                     <input type="hidden" name="date" id="bk-date" />
-                    <input type="hidden" name="time" id="bk-time" />
+                    <input type="hidden" name="start_time" id="bk-start-time" />
+                    <input type="hidden" name="end_time" id="bk-end-time" />
                     <input type="hidden" name="area" id="bk-area" />
-                    <input type="hidden" name="price" id="bk-price" />
-
-
-                    <!-- Options -->
-                    <div class="form-row">
-                        <div class="form-group col-sm-6">
-                            <label for="bk-duration">Délka</label>
-                            <select class="form-control" id="bk-duration" name="duration" required>
-                                <option value="" disabled selected>Vyberte…</option>
-                                <option value="30">30 minut</option>
-                                <option value="60">60 minut</option>
-                                <option value="90">90 minut</option>
-                            </select>
-                            <div class="invalid-feedback">Vyberte prosím délku.</div>
-                        </div>
-                        <div class="form-group col-sm-6">
-                            <label for="bk-activity">Aktivita</label>
-                            <select class="form-control" id="bk-activity" name="activity" required>
-                                <option value="" disabled selected>Vyberte…</option>
-                                <option>Badminton</option>
-                                <option>Squash</option>
-                                <option>Tenis</option>
-                                <option>Fotbal (5v5)</option>
-                                <option>Basketbal</option>
-                            </select>
-                            <div class="invalid-feedback">Vyberte prosím aktivitu.</div>
-                        </div>
-                    </div>
 
 
                     <div class="form-row">
@@ -121,7 +98,7 @@ templ Modal() {
 
                 <div class="modal-footer d-flex justify-content-between">
                     <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Zrušit</button>
-                    <button type="submit" class="btn btn-success">Odeslat rezervaci</button>
+                    <button type="submit" class="filled-button">Odeslat rezervaci</button>
                 </div>
             </form>
         </div>
@@ -129,15 +106,15 @@ templ Modal() {
 </div>
 
 <!-- Toast (feedback) -->
-<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 1rem; right: 1rem; z-index: 1080;">
-    <div class="toast" id="bookingToast" data-delay="3500">
-        <div class="toast-header">
-            <strong class="mr-auto">Rezervace</strong>
-            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Zavřít">
+<div aria-live="polite" aria-atomic="true" style="position: fixed; bottom: 1rem; right: 1rem; z-index: 1080; display: none;" id="bookingToastWrapper">
+    <div id="bookingToast" style="background: #fff; border: 0.25rem solid #232323; border-radius: .5rem; overflow: hidden; min-width: 260px;">
+        <div style="background: #fff; padding: .5rem .75rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #dee2e6;">
+            <strong style="color: #ec543d;">Rezervace</strong>
+            <button type="button" class="ml-2 mb-1 close" aria-label="Zavřít" onclick="hideToast()">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <div class="toast-body" id="bookingToastBody">Vaše žádost o rezervaci byla odeslána.</div>
+        <div style="padding: .75rem;" id="bookingToastBody">Vaše žádost o rezervaci byla odeslána.</div>
     </div>
 </div>
 
@@ -146,9 +123,9 @@ templ Modal() {
 <!-- JS: modal wiring -->
 <script>
     (function () {
-// Utility: pretty date/time for display
+        // Utility: pretty date for display
         function formatDate(iso) {
-// expects YYYY-MM-DD
+            // expects YYYY-MM-DD
             var parts = (iso || '').split('-');
             if (parts.length !== 3) return iso;
             var d = new Date(parts[0], parts[1]-1, parts[2]);
@@ -156,30 +133,50 @@ templ Modal() {
             try { return d.toLocaleDateString('cs-CZ', opts); } catch(e) { return iso; }
         }
 
+        // Utility: format a Date object as HH:MM
+        function formatTime(dt) {
+            if (!dt) return '—';
+            return dt.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Utility: calculate Czech duration string from two Date objects
+        function formatDuration(start, end) {
+            var mins = Math.round((end - start) / 60000);
+            if (mins <= 0) return '—';
+            var hours = mins / 60;
+            if (mins < 60) return '(' + mins + ' minut)';
+            if (hours === 1) return '(1 hodina)';
+            if (hours === 1.5) return '(1,5 hodiny)';
+            if (hours === 2) return '(2 hodiny)';
+            if (hours === 3) return '(3 hodiny)';
+            if (hours === 4) return '(4 hodiny)';
+            if (Number.isInteger(hours)) return '(' + hours + ' hodin)';
+            return '(' + hours + ' h)';
+        }
 
         function openBookingModal(payload) {
-// Fill summary displays
-            document.getElementById('bk-date-display').textContent = formatDate(payload.date);
-            document.getElementById('bk-time-display').textContent = payload.time || '—';
-            document.getElementById('bk-area-display').textContent = payload.area || '—';
-            document.getElementById('bk-price-display').textContent = payload.price ? payload.price + ' Kč' : '—';
-
-
-// Fill hidden inputs
-            document.getElementById('bk-date').value = payload.date || '';
-            document.getElementById('bk-time').value = payload.time || '';
-            document.getElementById('bk-area').value = payload.area || '';
-            document.getElementById('bk-price').value = payload.price || '';
-
-
-// Reset form state
+            // Reset form first
             var form = document.getElementById('bookingForm');
             form.reset();
-// Re-apply terms checked state to default if changed by reset
             document.getElementById('bk-reminder').checked = true;
 
+            var startDt = payload.startTime instanceof Date ? payload.startTime : new Date(payload.startTime);
+            var endDt   = payload.endTime   instanceof Date ? payload.endTime   : new Date(payload.endTime);
 
-// Show modal (Bootstrap 4 with jQuery) or fallback
+            // Fill summary displays
+            document.getElementById('bk-date-display').textContent     = formatDate(payload.date);
+            document.getElementById('bk-start-display').textContent    = formatTime(startDt);
+            document.getElementById('bk-end-display').textContent      = formatTime(endDt);
+            document.getElementById('bk-duration-display').textContent = formatDuration(startDt, endDt);
+            document.getElementById('bk-area-display').textContent     = payload.area || '—';
+
+            // Fill hidden inputs
+            document.getElementById('bk-date').value       = payload.date || '';
+            document.getElementById('bk-start-time').value = startDt ? startDt.toISOString() : '';
+            document.getElementById('bk-end-time').value   = endDt   ? endDt.toISOString()   : '';
+            document.getElementById('bk-area').value       = payload.area || '';
+
+            // Show modal (Bootstrap 4 with jQuery) or fallback
             if (window.jQuery && typeof jQuery.fn.modal === 'function') {
                 jQuery('#bookingModal').modal('show');
             } else {
@@ -189,32 +186,27 @@ templ Modal() {
             }
         }
 
-
         // Attach to window for easy external calls
         window.openBookingModal = openBookingModal;
 
+        var _toastTimer = null;
+        function showToast() {
+            document.getElementById('bookingToastWrapper').style.display = 'block';
+            if (_toastTimer) clearTimeout(_toastTimer);
+            _toastTimer = setTimeout(hideToast, 30000);
+        }
+        function hideToast() {
+            document.getElementById('bookingToastWrapper').style.display = 'none';
+            if (_toastTimer) { clearTimeout(_toastTimer); _toastTimer = null; }
+        }
+        window.hideToast = hideToast;
 
-// Click handler for example .timeslot buttons
-        document.addEventListener('click', function (e) {
-            var btn = e.target.closest('.timeslot');
-            if (!btn) return;
-            e.preventDefault();
-            openBookingModal({
-                date: btn.getAttribute('data-date'),
-                time: btn.getAttribute('data-time'),
-                area: btn.getAttribute('data-area'),
-                price: btn.getAttribute('data-price')
-            });
-        });
-
-
-// Form submission
+        // Form submission
         document.getElementById('bookingForm').addEventListener('submit', function (e) {
             e.preventDefault();
             var form = e.currentTarget;
 
-
-// Bootstrap-style validation
+            // Bootstrap-style validation
             var valid = true;
             Array.prototype.slice.call(form.querySelectorAll('[required]')).forEach(function (el) {
                 if (!el.checkValidity()) { valid = false; el.classList.add('is-invalid'); }
@@ -222,43 +214,35 @@ templ Modal() {
             });
             if (!valid) return;
 
-
-// Create a payload object
+            // Create a payload object
             var payload = {
-                date: document.getElementById('bk-date').value,
-                time: document.getElementById('bk-time').value,
-                area: document.getElementById('bk-area').value,
-                price: document.getElementById('bk-price').value,
-                duration: document.getElementById('bk-duration').value,
-                activity: document.getElementById('bk-activity').value,
-                name: document.getElementById('bk-name').value,
-                email: document.getElementById('bk-email').value,
-                phone: document.getElementById('bk-phone').value,
-                players: document.getElementById('bk-players').value,
-                notes: document.getElementById('bk-notes').value,
-                reminder: document.getElementById('bk-reminder').checked
+                date:       document.getElementById('bk-date').value,
+                start_time: document.getElementById('bk-start-time').value,
+                end_time:   document.getElementById('bk-end-time').value,
+                area:       document.getElementById('bk-area').value,
+                name:       document.getElementById('bk-name').value,
+                email:      document.getElementById('bk-email').value,
+                phone:      document.getElementById('bk-phone').value,
+                players:    document.getElementById('bk-players').value,
+                notes:      document.getElementById('bk-notes').value,
+                reminder:   document.getElementById('bk-reminder').checked
             };
 
-
-// Emit a custom event so your app can listen and actually submit to your backend
+            // Emit a custom event so your app can listen and actually submit to your backend
             var evt = new CustomEvent('booking:submit', { detail: payload });
             window.dispatchEvent(evt);
 
-
-// Close modal + show toast
+            // Close modal + show toast
             if (window.jQuery && typeof jQuery.fn.modal === 'function') {
                 jQuery('#bookingModal').modal('hide');
-                jQuery('#bookingToast').toast('show');
             } else {
                 document.getElementById('bookingModal').classList.remove('show');
                 document.getElementById('bookingModal').style.display = 'none';
                 document.body.classList.remove('modal-open');
-                document.getElementById('bookingToast').classList.add('show');
-                setTimeout(function(){ document.getElementById('bookingToast').classList.remove('show'); }, 3500);
             }
+            showToast();
 
-
-// Optional: log payload for development
+            // Optional: log payload for development
             if (window.console) console.log('booking:submit', payload);
         });
     })();

@@ -30,12 +30,23 @@
     font-size: 2rem;
 }
 
-/* Hover/focus efekt (červený overlay) */
+/* Hover/focus efekt */
 .zone:hover,
 .zone:focus-visible {
-    background: rgba(0, 0, 255, 0.35);
-    outline: 2px solid rgba(0, 0, 255, 0.7); /* pro klávesnici */
+    background: rgba(0, 0, 255, 0.5);
+    outline: 2px solid rgba(0, 0, 255, 0.7);
     outline-offset: 2px;
+}
+
+/* Aktivní (vybrané) hřiště — oranžová */
+.zone.zone--active {
+    background: rgba(236, 84, 61, 0.45);
+    outline: 2px solid rgba(236, 84, 61, 0.8);
+    outline-offset: 2px;
+}
+.zone.zone--active:hover,
+.zone.zone--active:focus-visible {
+    background: rgba(236, 84, 61, 0.6);
 }
 
 /* --- Konkrétní rozmístění zón --- */
@@ -76,7 +87,59 @@
     border-bottom-right-radius: 20% 50%;
 }
 
-/* Pokud chceš mít polygon “viditelný” i v klidu, přidej slabý overlay */
+/* Pokud chceš mít polygon "viditelný" i v klidu, přidej slabý overlay */
 .hriste-3 { background: rgba(0, 0, 255, 0.35); }
 .hriste-3:hover,
 .hriste-3:focus-visible { background: rgba(0,0,255,0.35); }
+
+/* Oranžový highlight pro uživatelský výběr v kalendáři */
+.fc-highlight {
+    background: rgba(236, 84, 61, 0.25) !important;
+}
+
+/* ── Layout container ─────────────────────────────────── */
+.res-page {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 220px);
+    padding: 0;
+}
+
+/* Two-column body */
+.res-body {
+    display: flex;
+}
+
+.res-sidebar {
+    flex: 0 0 200px;
+    border-right: 1px solid #dee2e6;
+}
+
+.res-calendar-panel {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+/* Court list: make items flex so icon goes to the right */
+.res-court-list .list-group-item {
+    display: flex;
+    align-items: center;
+}
+
+/* Aktivní hřiště v seznamu — oranžová místo modré */
+.res-court-list .list-group-item.active {
+    background-color: #ec543d;
+    border-color: #ec543d;
+    color: #fff;
+}
+
+/* Bottom bar */
+.res-bottombar {
+    flex: 0 0 auto;
+    min-height: 52px;
+}
+
+/* Areal map: centered, max width of image */
+.areal {
+    display: inline-block;
+}

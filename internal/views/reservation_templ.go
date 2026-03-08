@@ -30,7 +30,7 @@ func ReservationHead() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<script src=\"https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js\"></script><script>\n window.currentCourtId = 1; // default\n\n    function resetCalendar(id) {\n        console.log(\"reset kalendare\")\n\n        const el = document.getElementById('calendar');\n        console.log(\"a\" + el.dataset.initialized)\n        if (el && el.dataset.initialized) {\n            el.dataset.initialized = \"\";\n        }\n        console.log(\"b\" + el.dataset.initialized)\n        window.currentCourtId = id\n        initCalendar()\n    }\n\n   function initCalendar() {\n     const el = document.getElementById('calendar');\n     if (!el || el.dataset.initialized) return; // už inicializovaný nebo není na stránce\n     const calendar = new FullCalendar.Calendar(el, {\n       initialView: 'timeGridWeek',\n       locale: 'cs',\n       timeZone: 'Europe/Prague',\n       slotMinTime: '08:00:00',\n       slotMaxTime: '22:00:00',\n       slotDuration: '01:00:00',\n       selectable: true,\n       allDayText: 'celý den',\n       buttonText: {\n         today: 'Dnes',\n         month: 'Měsíc',\n         week: 'Týden',\n         day: 'Den',\n       },\n       events: {\n         url: '/api/events',\n         extraParams: () => ({ court_id: window.currentCourtId })\n       },\n       select: function (info) {\n         console.log('Vybral jsi slot:', info.startStr, info.endStr);\n         // tady můžeš spustit htmx GET na formulář\n       }\n     });\n\n     calendar.render();\n     el.dataset.initialized = \"true\"; // označ element, aby se znovu nespustil\n   }\n\n   // inicializace při prvním načtení\n   document.addEventListener('DOMContentLoaded', initCalendar);\n\n   // inicializace při každém HTMX swapu do #centre-page\n   document.body.addEventListener('htmx:afterSwap', function (evt) {\n     if (evt.target.id === \"centre-page\") {\n       initCalendar();\n     }\n   });\n </script><link rel=\"stylesheet\" href=\"css/reservation.css\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<script src=\"https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js\"></script><script>\n window.currentCourtId = 1;\n window.currentSelection = null;\n\n    function selectCourt(id) {\n        window.currentCourtId = id;\n        // Update sidebar active state\n        document.querySelectorAll('.res-court-list .list-group-item').forEach(function(btn) {\n            btn.classList.toggle('active', parseInt(btn.dataset.court) === id);\n        });\n        // Update zone highlight on areal map\n        document.querySelectorAll('.areal_overlay .zone').forEach(function(zone) {\n            zone.classList.toggle('zone--active', parseInt(zone.dataset.court) === id);\n        });\n        // Reset calendar\n        var el = document.getElementById('calendar');\n        if (el) el.dataset.initialized = '';\n        initCalendar();\n        // Clear any previous time selection\n        window.currentSelection = null;\n        updateBottomBar();\n    }\n\n    function updateBottomBar() {\n        var btnShrnuti = document.getElementById('btn-shrnuti');\n        var sel = window.currentSelection;\n        btnShrnuti.disabled = !sel;\n    }\n\n    function openSummaryModal() {\n        var sel = window.currentSelection;\n        if (!sel) return;\n        openBookingModal({\n            date:      sel.start.toISOString().slice(0, 10),\n            startTime: sel.start,\n            endTime:   sel.end,\n            area:      'Hřiště ' + window.currentCourtId\n        });\n    }\n\n   function initCalendar() {\n     const el = document.getElementById('calendar');\n     if (!el || el.dataset.initialized) return; // už inicializovaný nebo není na stránce\n     const calendar = new FullCalendar.Calendar(el, {\n       initialView: 'timeGridWeek',\n       locale: 'cs',\n       timeZone: 'Europe/Prague',\n       slotMinTime: '08:00:00',\n       slotMaxTime: '22:00:00',\n       slotDuration: '01:00:00',\n       selectable: true,\n       contentHeight: 'auto',\n       allDayText: 'celý den',\n       buttonText: {\n         today: 'Dnes',\n         month: 'Měsíc',\n         week: 'Týden',\n         day: 'Den',\n       },\n       events: {\n         url: '/api/events',\n         extraParams: () => ({ court_id: window.currentCourtId })\n       },\n       select: function(info) {\n         window.currentSelection = { start: info.start, end: info.end };\n         updateBottomBar();\n       }\n     });\n\n     calendar.render();\n     el.dataset.initialized = \"true\"; // označ element, aby se znovu nespustil\n   }\n\n   // inicializace při prvním načtení\n   document.addEventListener('DOMContentLoaded', initCalendar);\n\n   // inicializace při každém HTMX swapu do #centre-page\n   document.body.addEventListener('htmx:afterSwap', function (evt) {\n     if (evt.target.id === \"centre-page\") {\n       initCalendar();\n     }\n   });\n </script><link rel=\"stylesheet\" href=\"css/reservation.css\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -38,7 +38,7 @@ func ReservationHead() templ.Component {
 	})
 }
 
-func Areal() templ.Component {
+func Reservation() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -63,7 +63,7 @@ func Areal() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"areal\"><img src=\"/images/areal.png\" alt=\"Sportoviště\" class=\"areal_img\"><div class=\"areal_overlay\"><!-- ZÓNA 1: obdélník --><button class=\"zone zone--rect hriste-1\" aria-label=\"Hřiště 1\" hx-on:click=\"resetCalendar(1); document.getElementById('field-name').innerText='Hřiště 1'\">Hřiště 1</button><!--      hx-on:click=\"document.getElementById('field-name').innerText='Hřiště 1'; initCalendar()\"--><button class=\"zone zone--rect hriste-2\" aria-label=\"Hřiště 2\" hx-on:click=\"resetCalendar(2); document.getElementById('field-name').innerText='Hřiště 2'\">Hřiště 2</button><!--          hx-on:click=\"window.currentCourtId=2; el.dataset.initialized=false; initCalendar(); document.getElementById('field-name').innerText='Hřiště 2'\"--><button class=\"zone zone--poly hriste-3\" aria-label=\"Hřiště 3\" hx-on:click=\"resetCalendar(3); document.getElementById('field-name').innerText='Hřiště 3'\">Hřiště 3</button></div></div><section class=\"section\" id=\"booking-times\"><div class=\"container\"><div class=\"row\"><div class=\"col-lg-12\"><h4 class=\"mb-3\">Vyberte čas</h4><div class=\"d-flex flex-wrap\"><button class=\"timeslot main-button mr-2 mb-2\" data-date=\"2025-09-16\" data-time=\"18:00\" data-area=\"Hřiště A\" data-price=\"12\">18:00 – Hřiště A</button> <button class=\"timeslot main-button mr-2 mb-2\" data-date=\"2025-09-16\" data-time=\"19:00\" data-area=\"Hřiště B\" data-price=\"12\">19:00 – Hřiště B</button> <button class=\"timeslot main-button mr-2 mb-2\" data-date=\"2025-09-16\" data-time=\"20:00\" data-area=\"Hřiště C\" data-price=\"14\">20:00 – Hřiště C</button></div></div></div></div></section><!-- todo tady by se dalo na hoover vykresilt info o hristich --><div id=\"detail\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"page-heading header-text\"><div class=\"container\"><div class=\"row\"><div class=\"col-md-12\"><h1>Rezervace</h1><span>Vyberte si hřiště, zvolte volný čas a rezervujte si hřiště. </span></div></div></div></div><div class=\"res-page\"><!-- Main content constrained to container width --><div class=\"container\"><!-- Top bar --><div class=\"row\"><div class=\"col-md-12\"><div class=\"res-topbar d-flex align-items-center py-2 border-bottom\"><span class=\"font-weight-bold\">Zvolte hřiště</span></div></div></div><!-- Row 1: interaktivní mapa areálu --><div class=\"row\"><div class=\"col-md-12 text-center py-3 border-bottom\"><div class=\"areal mx-auto\"><img src=\"/images/areal.png\" alt=\"Sportoviště\" class=\"areal_img\"><div class=\"areal_overlay\"><button class=\"zone zone--rect hriste-1 zone--active\" data-court=\"1\" aria-label=\"Hřiště 1\" hx-on:click=\"selectCourt(1)\">Hřiště 1</button> <button class=\"zone zone--rect hriste-2\" data-court=\"2\" aria-label=\"Hřiště 2\" hx-on:click=\"selectCourt(2)\">Hřiště 2</button> <button class=\"zone zone--poly hriste-3\" data-court=\"3\" aria-label=\"Hřiště 3\" hx-on:click=\"selectCourt(3)\">Hřiště 3</button></div></div></div></div><!-- Row 2: sidebar (seznam hřišť) + kalendář --><div class=\"row\"><div class=\"col-md-12\"><div class=\"res-topbar d-flex align-items-center py-2 border-bottom\"><span class=\"font-weight-bold\">Vyberte termín</span></div></div></div><div class=\"row\"><div class=\"col-md-12 px-0\"><div class=\"res-body\"><div class=\"res-sidebar\"><div class=\"list-group list-group-flush res-court-list\"><button type=\"button\" class=\"list-group-item list-group-item-action active\" data-court=\"1\" onclick=\"selectCourt(1)\">Hřiště 1 <i class=\"fa fa-info-circle ml-auto text-muted\" title=\"Info\"></i></button> <button type=\"button\" class=\"list-group-item list-group-item-action\" data-court=\"2\" onclick=\"selectCourt(2)\">Hřiště 2 <i class=\"fa fa-info-circle ml-auto text-muted\" title=\"Info\"></i></button> <button type=\"button\" class=\"list-group-item list-group-item-action\" data-court=\"3\" onclick=\"selectCourt(3)\">Hřiště 3 <i class=\"fa fa-info-circle ml-auto text-muted\" title=\"Info\"></i></button></div></div><div class=\"res-calendar-panel p-3\"><p class=\"text-muted small text-uppercase mb-2\">Datum a čas</p><div id=\"calendar\"></div></div></div></div></div></div><!-- /container --><!-- Bottom bar --><div class=\"container\"><div class=\"row\"><div class=\"col-md-12\"><div class=\"res-bottombar d-flex align-items-center justify-content-between py-2 border-top\"><span class=\"font-weight-bold\">Vytvořte rezervaci</span> <button type=\"button\" class=\"filled-button\" id=\"btn-shrnuti\" disabled onclick=\"openSummaryModal()\">Vytvoření rezervace</button></div></div></div></div></div><!-- /res-page -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -92,43 +92,6 @@ func Form() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		return nil
-	})
-}
-
-func Reservation() templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"page\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = Areal().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div><h1 id=\"field-name\">Kalendář</h1></div><div id=\"form-div\"></div><div id=\"calendar\"></div></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		return nil
 	})
 }

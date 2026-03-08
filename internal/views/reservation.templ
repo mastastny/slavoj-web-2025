@@ -7,19 +7,43 @@ templ ReservationHead() {
  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
 
  <script>
- window.currentCourtId = 1; // default
+ window.currentCourtId = 1;
+ window.currentSelection = null;
 
-    function resetCalendar(id) {
-        console.log("reset kalendare")
+    function selectCourt(id) {
+        window.currentCourtId = id;
+        // Update sidebar active state
+        document.querySelectorAll('.res-court-list .list-group-item').forEach(function(btn) {
+            btn.classList.toggle('active', parseInt(btn.dataset.court) === id);
+        });
+        // Update zone highlight on areal map
+        document.querySelectorAll('.areal_overlay .zone').forEach(function(zone) {
+            zone.classList.toggle('zone--active', parseInt(zone.dataset.court) === id);
+        });
+        // Reset calendar
+        var el = document.getElementById('calendar');
+        if (el) el.dataset.initialized = '';
+        initCalendar();
+        // Clear any previous time selection
+        window.currentSelection = null;
+        updateBottomBar();
+    }
 
-        const el = document.getElementById('calendar');
-        console.log("a" + el.dataset.initialized)
-        if (el && el.dataset.initialized) {
-            el.dataset.initialized = "";
-        }
-        console.log("b" + el.dataset.initialized)
-        window.currentCourtId = id
-        initCalendar()
+    function updateBottomBar() {
+        var btnShrnuti = document.getElementById('btn-shrnuti');
+        var sel = window.currentSelection;
+        btnShrnuti.disabled = !sel;
+    }
+
+    function openSummaryModal() {
+        var sel = window.currentSelection;
+        if (!sel) return;
+        openBookingModal({
+            date:      sel.start.toISOString().slice(0, 10),
+            startTime: sel.start,
+            endTime:   sel.end,
+            area:      'Hřiště ' + window.currentCourtId
+        });
     }
 
    function initCalendar() {
@@ -33,6 +57,7 @@ templ ReservationHead() {
        slotMaxTime: '22:00:00',
        slotDuration: '01:00:00',
        selectable: true,
+       contentHeight: 'auto',
        allDayText: 'celý den',
        buttonText: {
          today: 'Dnes',
@@ -44,9 +69,9 @@ templ ReservationHead() {
          url: '/api/events',
          extraParams: () => ({ court_id: window.currentCourtId })
        },
-       select: function (info) {
-         console.log('Vybral jsi slot:', info.startStr, info.endStr);
-         // tady můžeš spustit htmx GET na formulář
+       select: function(info) {
+         window.currentSelection = { start: info.start, end: info.end };
+         updateBottomBar();
        }
      });
 
@@ -70,84 +95,114 @@ templ ReservationHead() {
 }
 
 
-templ Areal() {
-@Modal()
+templ Reservation() {
+  @Modal()
 
-<div class="areal">
-  <img src="/images/areal.png" alt="Sportoviště" class="areal_img">
-
-    <div class="areal_overlay">
-    <!-- ZÓNA 1: obdélník -->
-      <button
-        class="zone zone--rect hriste-1"
-        aria-label="Hřiště 1"
-        hx-on:click="resetCalendar(1); document.getElementById('field-name').innerText='Hřiště 1'"
-        >
-        Hřiště 1
-      </button>
-<!--      hx-on:click="document.getElementById('field-name').innerText='Hřiště 1'; initCalendar()"-->
-        <button
-          class="zone zone--rect hriste-2"
-          aria-label="Hřiště 2"
-          hx-on:click="resetCalendar(2); document.getElementById('field-name').innerText='Hřiště 2'"
-          >
-          Hřiště 2
-        </button>
-        <!--          hx-on:click="window.currentCourtId=2; el.dataset.initialized=false; initCalendar(); document.getElementById('field-name').innerText='Hřiště 2'"-->
-      <button
-        class="zone zone--poly hriste-3"
-        aria-label="Hřiště 3"
-        hx-on:click="resetCalendar(3); document.getElementById('field-name').innerText='Hřiště 3'"
-        >
-        Hřiště 3
-      </button>
-    </div>
-</div>
-
-<section class="section" id="booking-times">
+<div class="page-heading header-text">
     <div class="container">
         <div class="row">
-            <div class="col-lg-12">
-                <h4 class="mb-3">Vyberte čas</h4>
-                <div class="d-flex flex-wrap">
-                    <button class="timeslot main-button mr-2 mb-2"
-                            data-date="2025-09-16" data-time="18:00" data-area="Hřiště A" data-price="12">
-                        18:00 – Hřiště A
-                    </button>
-                    <button class="timeslot main-button mr-2 mb-2"
-                            data-date="2025-09-16" data-time="19:00" data-area="Hřiště B" data-price="12">
-                        19:00 – Hřiště B
-                    </button>
-                    <button class="timeslot main-button mr-2 mb-2"
-                            data-date="2025-09-16" data-time="20:00" data-area="Hřiště C" data-price="14">
-                        20:00 – Hřiště C
-                    </button>
-                </div>
+            <div class="col-md-12">
+                <h1>Rezervace</h1>
+                <span>Vyberte si hřiště, zvolte volný čas a rezervujte si hřiště. </span>
             </div>
         </div>
     </div>
-</section>
+</div>
 
-<!-- todo tady by se dalo na hoover vykresilt info o hristich -->
-<div id="detail"></div>
+  <div class="res-page">
 
+    <!-- Main content constrained to container width -->
+    <div class="container">
+
+      <!-- Top bar -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="res-topbar d-flex align-items-center py-2 border-bottom">
+            <span class="font-weight-bold">Zvolte hřiště</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 1: interaktivní mapa areálu -->
+      <div class="row">
+        <div class="col-md-12 text-center py-3 border-bottom">
+          <div class="areal mx-auto">
+            <img src="/images/areal.png" alt="Sportoviště" class="areal_img">
+            <div class="areal_overlay">
+              <button class="zone zone--rect hriste-1 zone--active" data-court="1" aria-label="Hřiště 1"
+                hx-on:click="selectCourt(1)">Hřiště 1</button>
+              <button class="zone zone--rect hriste-2" data-court="2" aria-label="Hřiště 2"
+                hx-on:click="selectCourt(2)">Hřiště 2</button>
+              <button class="zone zone--poly hriste-3" data-court="3" aria-label="Hřiště 3"
+                hx-on:click="selectCourt(3)">Hřiště 3</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: sidebar (seznam hřišť) + kalendář -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="res-topbar d-flex align-items-center py-2 border-bottom">
+            <span class="font-weight-bold">Vyberte termín</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12 px-0">
+          <div class="res-body">
+
+            <div class="res-sidebar">
+              <div class="list-group list-group-flush res-court-list">
+                <button type="button" class="list-group-item list-group-item-action active"
+                  data-court="1" onclick="selectCourt(1)">
+                  Hřiště 1
+                  <i class="fa fa-info-circle ml-auto text-muted" title="Info"></i>
+                </button>
+                <button type="button" class="list-group-item list-group-item-action"
+                  data-court="2" onclick="selectCourt(2)">
+                  Hřiště 2
+                  <i class="fa fa-info-circle ml-auto text-muted" title="Info"></i>
+                </button>
+                <button type="button" class="list-group-item list-group-item-action"
+                  data-court="3" onclick="selectCourt(3)">
+                  Hřiště 3
+                  <i class="fa fa-info-circle ml-auto text-muted" title="Info"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="res-calendar-panel p-3">
+              <p class="text-muted small text-uppercase mb-2">Datum a čas</p>
+              <div id="calendar"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /container -->
+
+    <!-- Bottom bar -->
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="res-bottombar d-flex align-items-center justify-content-between py-2 border-top">
+            <span class="font-weight-bold">Vytvořte rezervaci</span>
+            <button type="button" class="filled-button" id="btn-shrnuti"
+              disabled onclick="openSummaryModal()">
+              Vytvoření rezervace
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /res-page -->
 }
 
 
 templ Form() {
 
 }
-
-
-
-templ Reservation() {
-<div class="page">
-    @Areal()
-    <div >
-        <h1 id="field-name" >Kalendář</h1>
-    </div>
-    <div id="form-div"></div>
-    <div id='calendar'></div>
-</div>
-}
-

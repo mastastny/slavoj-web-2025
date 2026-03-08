@@ -33,6 +33,13 @@ templ ReservationHead() {
        slotMaxTime: '22:00:00',
        slotDuration: '01:00:00',
        selectable: true,
+       allDayText: 'celý den',
+       buttonText: {
+         today: 'Dnes',
+         month: 'Měsíc',
+         week: 'Týden',
+         day: 'Den',
+       },
        events: {
          url: '/api/events',
          extraParams: () => ({ court_id: window.currentCourtId })

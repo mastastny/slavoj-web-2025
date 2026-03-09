@@ -4,3 +4,8 @@
     padding: 2rem;
     flex-direction: column;
 }
+
+.nav-link {
+    cursor: pointer;
+}
+

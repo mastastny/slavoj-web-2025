@@ -135,7 +135,7 @@ templ Layout(title string) {
 <!-- Footer Starts Here -->
 <footer>
     <div class="container">
-        <div class="row">
+        <div class="row pb-4">
             <div class="col-md-3 footer-item">
 <!--                <h4>TJ Slavoj Loštice</h4>-->
                 <h4>Sportovní areál města Loštice</h4>
@@ -193,6 +193,20 @@ templ Layout(title string) {
                 </div>
             </div>
         </div>
+
+        <!-- Sponzoři -->
+        <div class="row border-top py-3">
+            <div class="col-md-12 text-center">
+                <h6 class="text-muted text-uppercase mb-3">Sponzoři</h6>
+                <div class="d-flex align-items-center justify-content-center flex-wrap" style="gap: 2rem;">
+                    <img src="/images/sponsors/logo_lostice.jpg"        alt="Loštice" style="height: 6rem; width: auto;">
+                    <img src="/images/sponsors/hrosi-stavby-morava-03-cropped.jpg"    alt="Hroší stavby Morava"     style="height: 6rem; width: auto;">
+                    <img src="/images/sponsors/vinci-construction-logo-vector.png" alt="Vinci" style="height: 6rem; width: auto;">
+                    <img src="/images/sponsors/zlkl_1.png"              alt="ZLKL"    style="height: 6rem; width: auto;">
+                </div>
+            </div>
+        </div>
+
     </div>
 </footer>
 

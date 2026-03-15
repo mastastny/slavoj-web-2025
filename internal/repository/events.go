@@ -15,15 +15,15 @@ type EventRepository interface {
 	GetEventsByCourtAndRange(courtID, startStr, endStr string) ([]models.Event, error)
 }
 
-type sqliteEventRepository struct {
+type SqliteEventRepository struct {
 	db *sql.DB
 }
 
 func NewEventRepository(db *sql.DB) EventRepository {
-	return &sqliteEventRepository{db: db}
+	return &SqliteEventRepository{db: db}
 }
 
-func (r *sqliteEventRepository) GetEventsByCourtAndRange(courtID, startStr, endStr string) ([]models.Event, error) {
+func (r *SqliteEventRepository) GetEventsByCourtAndRange(courtID, startStr, endStr string) ([]models.Event, error) {
 	rows, err := r.db.Query(getEventsByCourtAndRange, courtID, startStr, endStr)
 	if err != nil {
 		return nil, err

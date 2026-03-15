@@ -25,10 +25,6 @@ func GetContacts(c echo.Context) error {
 	return renderHTML(c, views.Contacts())
 }
 
-func GetReservation(c echo.Context) error {
-	return renderHTML(c, views.Reservation())
-}
-
 func GetModal(c echo.Context) error {
 	return renderHTML(c, views.Modal())
 }

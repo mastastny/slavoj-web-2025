@@ -12,6 +12,8 @@ import (
 	config "github.com/mastastny/slavoj-web-2025/internal/config"
 	"github.com/mastastny/slavoj-web-2025/internal/database"
 	"github.com/mastastny/slavoj-web-2025/internal/handlers"
+	"github.com/mastastny/slavoj-web-2025/internal/repository"
+	"github.com/mastastny/slavoj-web-2025/internal/service"
 )
 
 var echoLambda *echoadapter.EchoLambdaV2
@@ -23,13 +25,17 @@ func main() {
 	defer db.Close()
 	server := handlers.NewServer(db)
 
+	eventRepository := repository.NewEventRepository(db)
+	reservationService := service.ConstructReservation(eventRepository)
+	reservationHandler := handlers.Construct(reservationService)
+
 	e := echo.New()
 	e.Static("/", "static")
 
 	e.GET("/", handlers.GetHome)
 	e.GET("/about", handlers.GetAbout)
 	e.GET("/areals", handlers.GetAreals)
-	e.GET("/reservation", handlers.GetReservation)
+	e.GET("/reservation", reservationHandler.GetReservation)
 	e.GET("/membership", handlers.GetMembership)
 	e.GET("/contacts", handlers.GetContacts)
 	e.GET("/modal", handlers.GetModal)
@@ -37,6 +43,8 @@ func main() {
 	e.GET("/home", handlers.GetHomeContent)
 
 	e.GET("/api/events", server.GetEvents)
+
+	e.POST("/api/reservation", reservationHandler.PostReservation)
 
 	if os.Getenv("AWS_LAMBDA_FUNCTION_NAME") != "" {
 		echoLambda = echoadapter.NewV2(e)

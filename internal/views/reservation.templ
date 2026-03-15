@@ -42,7 +42,8 @@ templ ReservationHead() {
             date:      sel.start.toISOString().slice(0, 10),
             startTime: sel.start,
             endTime:   sel.end,
-            area:      'Hřiště ' + window.currentCourtId
+            area:      'Hřiště ' + window.currentCourtId,
+            areaId:    window.currentCourtId
         });
     }
 
@@ -55,7 +56,7 @@ templ ReservationHead() {
        timeZone: 'Europe/Prague',
        slotMinTime: '08:00:00',
        slotMaxTime: '22:00:00',
-       slotDuration: '01:00:00',
+       slotDuration: '00:30:00',
        selectable: true,
        contentHeight: 'auto',
        allDayText: 'celý den',

@@ -50,7 +50,7 @@ templ ReservationHead() {
    function initCalendar() {
      const el = document.getElementById('calendar');
      if (!el || el.dataset.initialized) return; // už inicializovaný nebo není na stránce
-     const calendar = new FullCalendar.Calendar(el, {
+     window.calendar = new FullCalendar.Calendar(el, {
        initialView: 'timeGridWeek',
        locale: 'cs',
        timeZone: 'Europe/Prague',
@@ -76,7 +76,7 @@ templ ReservationHead() {
        }
      });
 
-     calendar.render();
+     window.calendar.render();
      el.dataset.initialized = "true"; // označ element, aby se znovu nespustil
    }
 

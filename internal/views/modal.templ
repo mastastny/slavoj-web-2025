@@ -220,6 +220,13 @@ templ Modal() {
         jQuery('#bookingModal').on('hidden.bs.modal', function () {
             htmx.ajax('GET', '/api/reservation/form', {target: '#bookingModalContent', swap: 'innerHTML'});
         });
+
+        // Refetch calendar events after successful reservation
+        document.getElementById('bookingModal').addEventListener('htmx:afterRequest', function (e) {
+            if (e.detail.successful && window.calendar) {
+                window.calendar.refetchEvents();
+            }
+        });
     })();
 </script>
 }

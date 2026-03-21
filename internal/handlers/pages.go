@@ -29,6 +29,10 @@ func GetModal(c echo.Context) error {
 	return renderHTML(c, views.Modal())
 }
 
+func GetModalBookingForm(c echo.Context) error {
+	return renderHTML(c, views.ModalBookingForm())
+}
+
 func GetDocuments(c echo.Context) error {
 	return renderHTML(c, views.Documents())
 }

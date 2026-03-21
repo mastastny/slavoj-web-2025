@@ -1,106 +1,110 @@
 package views
 
 
+templ ModalBookingForm() {
+    <div class="modal-header">
+        <h5 class="modal-title" id="bookingModalLabel">Potvrdit rezervaci</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Zavřít">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <form id="bookingForm" hx-post="/api/reservation" hx-target="#bookingModalContent" hx-swap="innerHTML" novalidate>
+        <div class="modal-body">
+            <!-- Summary -->
+            <div class="bg-light p-3 rounded mb-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="small text-muted">Datum</div>
+                        <div class="font-weight-bold" id="bk-date-display">—</div>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Od</div>
+                        <div class="font-weight-bold" id="bk-start-display">—</div>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Do</div>
+                        <div class="font-weight-bold" id="bk-end-display">—</div>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Délka</div>
+                        <div class="font-weight-bold" id="bk-duration-display">—</div>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Hřiště</div>
+                        <div class="font-weight-bold" id="bk-area-display">—</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Hidden machine values for submission -->
+            <input type="hidden" name="date" id="bk-date" />
+            <input type="hidden" name="start_time" id="bk-start-time" />
+            <input type="hidden" name="end_time" id="bk-end-time" />
+            <input type="hidden" name="area_id" id="bk-area-id" />
+
+
+            <div class="form-row">
+                <div class="form-group col-sm-6">
+                    <label for="bk-name">Vaše jméno</label>
+                    <input type="text" class="form-control" id="bk-name" name="name" required>
+                    <div class="invalid-feedback">Jméno je povinné.</div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label for="bk-email">E-mail</label>
+                    <input type="email" class="form-control" id="bk-email" name="email" required>
+                    <div class="invalid-feedback">Zadejte platný e-mail.</div>
+                </div>
+            </div>
+
+
+            <div class="form-row">
+                <div class="form-group col-sm-6">
+                    <label for="bk-phone">Telefon (volitelný)</label>
+                    <input type="tel" class="form-control" id="bk-phone" name="phone" placeholder="+420 …">
+                </div>
+                <div class="form-group col-sm-6">
+                    <label for="bk-players">Počet hráčů</label>
+                    <input type="number" min="1" max="20" value="2" class="form-control" id="bk-players" name="players" required>
+                    <div class="invalid-feedback">Zadejte počet hráčů.</div>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label for="bk-notes">Poznámka (volitelná)</label>
+                <textarea class="form-control" id="bk-notes" name="notes" rows="2" placeholder="Cokoliv, co bychom měli vědět? Např. zapůjčení rakety."></textarea>
+            </div>
+
+
+            <div class="custom-control custom-checkbox mb-2">
+                <input type="checkbox" class="custom-control-input" id="bk-terms" required>
+                <label class="custom-control-label" for="bk-terms">Souhlasím s <a href="#" target="_blank">podmínkami a storno politikou</a>.</label>
+                <div class="invalid-feedback" style="display:block">Musíte souhlasit, abyste mohli pokračovat.</div>
+            </div>
+
+
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="bk-reminder" name="reminder" checked>
+                <label class="custom-control-label" for="bk-reminder">Pošlete mi připomínku 24 hodin předem</label>
+            </div>
+        </div>
+
+
+        <div class="modal-footer d-flex justify-content-between">
+            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Zrušit</button>
+            <button type="submit" class="filled-button">Odeslat rezervaci</button>
+        </div>
+    </form>
+}
+
 templ Modal() {
 <!-- Booking Modal -->
 <div class="modal fade" id="bookingModal" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content" id="bookingModalContent">
-            <div class="modal-header">
-                <h5 class="modal-title" id="bookingModalLabel">Potvrdit rezervaci</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Zavřít">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <form id="bookingForm" hx-post="/api/reservation" hx-target="#bookingModalContent" hx-swap="innerHTML" novalidate>
-                <div class="modal-body">
-                    <!-- Summary -->
-                    <div class="bg-light p-3 rounded mb-3">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <div class="small text-muted">Datum</div>
-                                <div class="font-weight-bold" id="bk-date-display">—</div>
-                            </div>
-                            <div>
-                                <div class="small text-muted">Od</div>
-                                <div class="font-weight-bold" id="bk-start-display">—</div>
-                            </div>
-                            <div>
-                                <div class="small text-muted">Do</div>
-                                <div class="font-weight-bold" id="bk-end-display">—</div>
-                            </div>
-                            <div>
-                                <div class="small text-muted">Délka</div>
-                                <div class="font-weight-bold" id="bk-duration-display">—</div>
-                            </div>
-                            <div>
-                                <div class="small text-muted">Hřiště</div>
-                                <div class="font-weight-bold" id="bk-area-display">—</div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!-- Hidden machine values for submission -->
-                    <input type="hidden" name="date" id="bk-date" />
-                    <input type="hidden" name="start_time" id="bk-start-time" />
-                    <input type="hidden" name="end_time" id="bk-end-time" />
-                    <input type="hidden" name="area_id" id="bk-area-id" />
-
-
-                    <div class="form-row">
-                        <div class="form-group col-sm-6">
-                            <label for="bk-name">Vaše jméno</label>
-                            <input type="text" class="form-control" id="bk-name" name="name" required>
-                            <div class="invalid-feedback">Jméno je povinné.</div>
-                        </div>
-                        <div class="form-group col-sm-6">
-                            <label for="bk-email">E-mail</label>
-                            <input type="email" class="form-control" id="bk-email" name="email" required>
-                            <div class="invalid-feedback">Zadejte platný e-mail.</div>
-                        </div>
-                    </div>
-
-
-                    <div class="form-row">
-                        <div class="form-group col-sm-6">
-                            <label for="bk-phone">Telefon (volitelný)</label>
-                            <input type="tel" class="form-control" id="bk-phone" name="phone" placeholder="+420 …">
-                        </div>
-                        <div class="form-group col-sm-6">
-                            <label for="bk-players">Počet hráčů</label>
-                            <input type="number" min="1" max="20" value="2" class="form-control" id="bk-players" name="players" required>
-                            <div class="invalid-feedback">Zadejte počet hráčů.</div>
-                        </div>
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="bk-notes">Poznámka (volitelná)</label>
-                        <textarea class="form-control" id="bk-notes" name="notes" rows="2" placeholder="Cokoliv, co bychom měli vědět? Např. zapůjčení rakety."></textarea>
-                    </div>
-
-
-                    <div class="custom-control custom-checkbox mb-2">
-                        <input type="checkbox" class="custom-control-input" id="bk-terms" required>
-                        <label class="custom-control-label" for="bk-terms">Souhlasím s <a href="#" target="_blank">podmínkami a storno politikou</a>.</label>
-                        <div class="invalid-feedback" style="display:block">Musíte souhlasit, abyste mohli pokračovat.</div>
-                    </div>
-
-
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="bk-reminder" name="reminder" checked>
-                        <label class="custom-control-label" for="bk-reminder">Pošlete mi připomínku 24 hodin předem</label>
-                    </div>
-                </div>
-
-
-                <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Zrušit</button>
-                    <button type="submit" class="filled-button">Odeslat rezervaci</button>
-                </div>
-            </form>
+            @ModalBookingForm()
         </div>
     </div>
 </div>
@@ -212,18 +216,10 @@ templ Modal() {
             if (!valid) e.preventDefault();
         });
 
-        // // After successful submission: close modal + show toast
-        // document.getElementById('bookingForm').addEventListener('htmx:after-request', function (e) {
-        //     if (!e.detail.successful) return;
-        //     if (window.jQuery && typeof jQuery.fn.modal === 'function') {
-        //         jQuery('#bookingModal').modal('hide');
-        //     } else {
-        //         document.getElementById('bookingModal').classList.remove('show');
-        //         document.getElementById('bookingModal').style.display = 'none';
-        //         document.body.classList.remove('modal-open');
-        //     }
-        //     showToast();
-        // });
+        // Reset modal form after close (Bootstrap 4 fires jQuery events, not native DOM events)
+        jQuery('#bookingModal').on('hidden.bs.modal', function () {
+            htmx.ajax('GET', '/api/reservation/form', {target: '#bookingModalContent', swap: 'innerHTML'});
+        });
     })();
 </script>
 }

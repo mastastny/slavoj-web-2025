@@ -45,6 +45,7 @@ func main() {
 	e.GET("/api/events", server.GetEvents)
 
 	e.POST("/api/reservation", reservationHandler.PostReservation)
+	e.GET("/api/reservation/form", handlers.GetModalBookingForm)
 
 	if os.Getenv("AWS_LAMBDA_FUNCTION_NAME") != "" {
 		echoLambda = echoadapter.NewV2(e)

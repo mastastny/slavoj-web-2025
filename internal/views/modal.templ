@@ -205,9 +205,10 @@ templ Modal() {
         }
         window.hideToast = hideToast;
 
-        // Validation before HTMX sends the request
-        document.getElementById('bookingForm').addEventListener('htmx:before-request', function (e) {
+        // Validation before HTMX sends the request (delegated to #bookingModal so it survives HTMX swaps)
+        document.getElementById('bookingModal').addEventListener('htmx:before-request', function (e) {
             var form = document.getElementById('bookingForm');
+            if (!form) return;
             var valid = true;
             Array.prototype.slice.call(form.querySelectorAll('[required]')).forEach(function (el) {
                 if (!el.checkValidity()) { valid = false; el.classList.add('is-invalid'); }

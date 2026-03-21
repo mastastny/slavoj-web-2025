@@ -12,6 +12,7 @@ import (
 	config "github.com/mastastny/slavoj-web-2025/internal/config"
 	"github.com/mastastny/slavoj-web-2025/internal/database"
 	"github.com/mastastny/slavoj-web-2025/internal/handlers"
+	"github.com/mastastny/slavoj-web-2025/internal/models"
 	"github.com/mastastny/slavoj-web-2025/internal/repository"
 	"github.com/mastastny/slavoj-web-2025/internal/service"
 )
@@ -25,9 +26,15 @@ func main() {
 	defer db.Close()
 	server := handlers.NewServer(db)
 
+	courts := []models.Court{
+		{ID: 1, Name: "Hřiště 1"},
+		{ID: 2, Name: "Hřiště 2"},
+		{ID: 3, Name: "Hřiště 3"},
+	}
+
 	eventRepository := repository.NewEventRepository(db)
 	reservationService := service.ConstructReservation(eventRepository)
-	reservationHandler := handlers.Construct(reservationService)
+	reservationHandler := handlers.Construct(reservationService, courts)
 
 	e := echo.New()
 	e.Static("/", "static")

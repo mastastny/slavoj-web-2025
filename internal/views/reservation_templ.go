@@ -8,7 +8,11 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-// import "github.com/a-h/templ"
+import (
+	"fmt"
+	"github.com/mastastny/slavoj-web-2025/internal/models"
+)
+
 func ReservationHead() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -38,7 +42,7 @@ func ReservationHead() templ.Component {
 	})
 }
 
-func Reservation() templ.Component {
+func Reservation(courts []models.Court) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -63,7 +67,154 @@ func Reservation() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"page-heading header-text\"><div class=\"container\"><div class=\"row\"><div class=\"col-md-12\"><h1>Rezervace</h1><span>Vyberte si hřiště, zvolte volný čas a rezervujte si hřiště. </span></div></div></div></div><div class=\"res-page\"><!-- Main content constrained to container width --><div class=\"container\"><!-- Top bar --><div class=\"row\"><div class=\"col-md-12\"><div class=\"res-topbar d-flex align-items-center py-2 border-bottom\"><span class=\"font-weight-bold\">Zvolte hřiště</span></div></div></div><!-- Row 1: interaktivní mapa areálu --><div class=\"row\"><div class=\"col-md-12 text-center py-3 border-bottom\"><div class=\"areal mx-auto\"><img src=\"/images/areal.png\" alt=\"Sportoviště\" class=\"areal_img\"><div class=\"areal_overlay\"><button class=\"zone zone--rect hriste-1 zone--active\" data-court=\"1\" aria-label=\"Hřiště 1\" hx-on:click=\"selectCourt(1)\">Hřiště 1</button> <button class=\"zone zone--rect hriste-2\" data-court=\"2\" aria-label=\"Hřiště 2\" hx-on:click=\"selectCourt(2)\">Hřiště 2</button> <button class=\"zone zone--poly hriste-3\" data-court=\"3\" aria-label=\"Hřiště 3\" hx-on:click=\"selectCourt(3)\">Hřiště 3</button></div></div></div></div><!-- Row 2: sidebar (seznam hřišť) + kalendář --><div class=\"row\"><div class=\"col-md-12\"><div class=\"res-topbar d-flex align-items-center py-2 border-bottom\"><span class=\"font-weight-bold\">Vyberte termín</span></div></div></div><div class=\"row\"><div class=\"col-md-12 px-0\"><div class=\"res-body\"><div class=\"res-sidebar\"><div class=\"list-group list-group-flush res-court-list\"><button type=\"button\" class=\"list-group-item list-group-item-action active\" data-court=\"1\" onclick=\"selectCourt(1)\">Hřiště 1 <i class=\"fa fa-info-circle ml-auto text-muted\" title=\"Info\"></i></button> <button type=\"button\" class=\"list-group-item list-group-item-action\" data-court=\"2\" onclick=\"selectCourt(2)\">Hřiště 2 <i class=\"fa fa-info-circle ml-auto text-muted\" title=\"Info\"></i></button> <button type=\"button\" class=\"list-group-item list-group-item-action\" data-court=\"3\" onclick=\"selectCourt(3)\">Hřiště 3 <i class=\"fa fa-info-circle ml-auto text-muted\" title=\"Info\"></i></button></div></div><div class=\"res-calendar-panel p-3\"><p class=\"text-muted small text-uppercase mb-2\">Datum a čas</p><div id=\"calendar\"></div></div></div></div></div></div><!-- /container --><!-- Bottom bar --><div class=\"container\"><div class=\"row\"><div class=\"col-md-12\"><div class=\"res-bottombar d-flex align-items-center justify-content-between py-2 border-top\"><span class=\"font-weight-bold\">Vytvořte rezervaci</span> <button type=\"button\" class=\"filled-button\" id=\"btn-shrnuti\" disabled onclick=\"openSummaryModal()\">Vytvoření rezervace</button></div></div></div></div></div><!-- /res-page -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"page-heading header-text\"><div class=\"container\"><div class=\"row\"><div class=\"col-md-12\"><h1>Rezervace</h1><span>Vyberte si hřiště, zvolte volný čas a rezervujte si hřiště. </span></div></div></div></div><div class=\"res-page\"><!-- Main content constrained to container width --><div class=\"container\"><!-- Top bar --><div class=\"row\"><div class=\"col-md-12\"><div class=\"res-topbar d-flex align-items-center py-2 border-bottom\"><span class=\"font-weight-bold\">Zvolte hřiště</span></div></div></div><!-- Row 1: interaktivní mapa areálu --><div class=\"row\"><div class=\"col-md-12 text-center py-3 border-bottom\"><div class=\"areal mx-auto\"><img src=\"/images/areal.png\" alt=\"Sportoviště\" class=\"areal_img\"><div class=\"areal_overlay\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for i, court := range courts {
+			var templ_7745c5c3_Var3 = []any{"zone", templ.KV("zone--rect", i < 2), templ.KV("zone--poly", i >= 2), templ.KV("zone--active", i == 0), fmt.Sprintf("hriste-%d", court.ID)}
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, fmt.Sprintf("selectCourt(%d)", court.ID))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<button class=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var3).String())
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/reservation.templ`, Line: 1, Col: 0}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" data-court=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var5 string
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", court.ID))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/reservation.templ`, Line: 160, Col: 58}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" aria-label=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(court.Name)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/reservation.templ`, Line: 161, Col: 41}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" hx-on:click=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var7 templ.ComponentScript = fmt.Sprintf("selectCourt(%d)", court.ID)
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7.Call)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var8 string
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(court.Name)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/reservation.templ`, Line: 163, Col: 30}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</button>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div></div></div><!-- Row 2: sidebar (seznam hřišť) + kalendář --><div class=\"row\"><div class=\"col-md-12\"><div class=\"res-topbar d-flex align-items-center py-2 border-bottom\"><span class=\"font-weight-bold\">Vyberte termín</span></div></div></div><div class=\"row\"><div class=\"col-md-12 px-0\"><div class=\"res-body\"><div class=\"res-sidebar\"><div class=\"list-group list-group-flush res-court-list\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for i, court := range courts {
+			var templ_7745c5c3_Var9 = []any{"list-group-item", "list-group-item-action", templ.KV("active", i == 0)}
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, templ.SafeScript(fmt.Sprintf("selectCourt(%d)", court.ID)))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<button type=\"button\" class=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var10 string
+			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var9).String())
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/reservation.templ`, Line: 1, Col: 0}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" data-court=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var11 string
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", court.ID))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/reservation.templ`, Line: 190, Col: 60}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" onclick=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var12 templ.ComponentScript = templ.SafeScript(fmt.Sprintf("selectCourt(%d)", court.ID))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12.Call)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var13 string
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(court.Name)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/reservation.templ`, Line: 192, Col: 32}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " <i class=\"fa fa-info-circle ml-auto text-muted\" title=\"Info\"></i></button>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div></div><div class=\"res-calendar-panel p-3\"><p class=\"text-muted small text-uppercase mb-2\">Datum a čas</p><div id=\"calendar\"></div></div></div></div></div></div><!-- /container --><!-- Bottom bar --><div class=\"container\"><div class=\"row\"><div class=\"col-md-12\"><div class=\"res-bottombar d-flex align-items-center justify-content-between py-2 border-top\"><span class=\"font-weight-bold\">Vytvořte rezervaci</span> <button type=\"button\" class=\"filled-button\" id=\"btn-shrnuti\" disabled onclick=\"openSummaryModal()\">Vytvoření rezervace</button></div></div></div></div></div><!-- /res-page -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -87,9 +238,9 @@ func Form() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
+		templ_7745c5c3_Var14 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var14 == nil {
+			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		return nil

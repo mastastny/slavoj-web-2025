@@ -1,6 +1,9 @@
 package views
 
-//import "github.com/a-h/templ"
+import (
+  "fmt"
+  "github.com/mastastny/slavoj-web-2025/internal/models"
+)
 
 
 templ ReservationHead() {
@@ -117,7 +120,7 @@ templ ReservationHead() {
 }
 
 
-templ Reservation() {
+templ Reservation(courts []models.Court) {
   @Modal()
 
 <div class="page-heading header-text">
@@ -151,12 +154,15 @@ templ Reservation() {
           <div class="areal mx-auto">
             <img src="/images/areal.png" alt="Sportoviště" class="areal_img">
             <div class="areal_overlay">
-              <button class="zone zone--rect hriste-1 zone--active" data-court="1" aria-label="Hřiště 1"
-                hx-on:click="selectCourt(1)">Hřiště 1</button>
-              <button class="zone zone--rect hriste-2" data-court="2" aria-label="Hřiště 2"
-                hx-on:click="selectCourt(2)">Hřiště 2</button>
-              <button class="zone zone--poly hriste-3" data-court="3" aria-label="Hřiště 3"
-                hx-on:click="selectCourt(3)">Hřiště 3</button>
+              for i, court := range courts {
+                <button
+                  class={ "zone", templ.KV("zone--rect", i < 2), templ.KV("zone--poly", i >= 2), templ.KV("zone--active", i == 0), fmt.Sprintf("hriste-%d", court.ID) }
+                  data-court={ fmt.Sprintf("%d", court.ID) }
+                  aria-label={ court.Name }
+                  hx-on:click={ fmt.Sprintf("selectCourt(%d)", court.ID) }>
+                  { court.Name }
+                </button>
+              }
             </div>
           </div>
         </div>
@@ -177,21 +183,16 @@ templ Reservation() {
 
             <div class="res-sidebar">
               <div class="list-group list-group-flush res-court-list">
-                <button type="button" class="list-group-item list-group-item-action active"
-                  data-court="1" onclick="selectCourt(1)">
-                  Hřiště 1
-                  <i class="fa fa-info-circle ml-auto text-muted" title="Info"></i>
-                </button>
-                <button type="button" class="list-group-item list-group-item-action"
-                  data-court="2" onclick="selectCourt(2)">
-                  Hřiště 2
-                  <i class="fa fa-info-circle ml-auto text-muted" title="Info"></i>
-                </button>
-                <button type="button" class="list-group-item list-group-item-action"
-                  data-court="3" onclick="selectCourt(3)">
-                  Hřiště 3
-                  <i class="fa fa-info-circle ml-auto text-muted" title="Info"></i>
-                </button>
+                for i, court := range courts {
+                  <button
+                    type="button"
+                    class={ "list-group-item", "list-group-item-action", templ.KV("active", i == 0) }
+                    data-court={ fmt.Sprintf("%d", court.ID) }
+                    onclick={ templ.SafeScript(fmt.Sprintf("selectCourt(%d)", court.ID)) }>
+                    { court.Name }
+                    <i class="fa fa-info-circle ml-auto text-muted" title="Info"></i>
+                  </button>
+                }
               </div>
             </div>
 

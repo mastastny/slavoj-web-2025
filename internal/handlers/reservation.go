@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"fmt"
-	"strconv"
+	"errors"
 
 	"github.com/labstack/echo/v4"
+	"github.com/mastastny/slavoj-web-2025/internal/apperrors"
 	"github.com/mastastny/slavoj-web-2025/internal/models/reservation"
 	"github.com/mastastny/slavoj-web-2025/internal/service"
 	"github.com/mastastny/slavoj-web-2025/internal/views"
@@ -26,23 +26,25 @@ func (rh *Reservation) GetReservation(c echo.Context) error {
 
 func (rh *Reservation) PostReservation(c echo.Context) error {
 	var form reservation.Handler
+
+	// missing some form data, this shouldn't be allowed by frontend.
+	// todo udelat nejaky chybovy widget
 	if err := c.Bind(&form); err != nil {
-		return renderHTML(c, views.ReservationResult(err.Error()))
+		return renderHTML(c, views.ReservationError(err.Error()))
 	}
 
 	newReservation := handlerToService(form)
-	rh.reservationService.Create(newReservation)
-
-	fmt.Println(form)
-	fmt.Print("dobry den")
-	if c.FormValue("name") == "Marek" {
-		return renderHTML(c, views.ReservationResult("Vitejte pane"+
-			"\n Jmeno: "+form.Name+
-			"\n Hriste: "+fmt.Sprintf("%d", form.Area)+
-			"\n reminder: "+strconv.FormatBool(bool(form.Reminder))+
-			"\n start: "+form.Start))
+	if err := rh.reservationService.Create(newReservation); err != nil {
+		if errors.Is(err, apperrors.ErrEventOverlap) {
+			return renderHTML(c, views.ReservationError("Nelze vytvořit rezervaci. Ve vybraném časovém rozmezí se již nachází jiná rezervace."))
+		}
+		if errors.Is(err, apperrors.ErrEventInThePast) {
+			return renderHTML(c, views.ReservationError("Rezervaci nelze vytvořit. Zvolený termín musí být v budoucnosti"))
+		}
+		return renderHTML(c, views.ReservationError("Bohužel právě nejsme schopni vytvořit rezervaci kvůli interní chybě. Zkuste prosím akci opakovat později, nebo kontaktujte administrátora."))
 	}
-	return renderHTML(c, views.ReservationResult("baad"))
+
+	return renderHTML(c, views.ReservationResult(form))
 }
 
 func handlerToService(f reservation.Handler) reservation.Service {

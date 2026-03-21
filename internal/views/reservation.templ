@@ -53,6 +53,7 @@ templ ReservationHead() {
      window.calendar = new FullCalendar.Calendar(el, {
        initialView: 'timeGridWeek',
        locale: 'cs',
+      firstDay: 1,
        timeZone: 'Europe/Prague',
        slotMinTime: '08:00:00',
        slotMaxTime: '22:00:00',
@@ -66,15 +67,35 @@ templ ReservationHead() {
          week: 'Týden',
          day: 'Den',
        },
-       events: {
-         url: '/api/events',
-         extraParams: () => ({ court_id: window.currentCourtId })
-       },
-       select: function(info) {
-         window.currentSelection = { start: info.start, end: info.end };
-         updateBottomBar();
-       }
-     });
+       eventSources: [
+         {
+           url: '/api/events',
+           extraParams: () => ({ court_id: window.currentCourtId })
+         },
+       ],
+      selectAllow: function(info) {
+        return info.start >= new Date();
+      },
+      select: function(info) {
+        window.currentSelection = { start: info.start, end: info.end };
+        updateBottomBar();
+      },
+      datesSet: function() {
+        var now = new Date();
+        var slotStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 0, 0);
+        var slotEnd   = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 22, 0, 0);
+        var pct = Math.max(0, Math.min(100, (now - slotStart) / (slotEnd - slotStart) * 100));
+        var col = document.querySelector('td.fc-timegrid-col.fc-day-today');
+        if (!col) return;
+        if (pct <= 0) {
+          col.style.background = 'rgba(255, 200, 0, 0.25)';
+        } else if (pct >= 100) {
+          col.style.background = 'rgba(44, 62, 80, 0.65)';
+        } else {
+          col.style.background = 'linear-gradient(to bottom, rgba(44, 62, 80, 0.65) ' + pct + '%, rgba(255, 200, 0, 0.25) ' + pct + '%)';
+        }
+      }
+    });
 
      window.calendar.render();
      el.dataset.initialized = "true"; // označ element, aby se znovu nespustil

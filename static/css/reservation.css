@@ -94,7 +94,18 @@
 
 /* Oranžový highlight pro uživatelský výběr v kalendáři */
 .fc-highlight {
-    background: rgba(236, 84, 61, 0.25) !important;
+    background: rgba(236, 84, 61, 0.6) !important;
+}
+
+/* Minulé dny */
+.fc-timegrid-col.fc-day-past {
+    background-color: var(--fc-button-bg-color);
+    opacity: 0.65;
+}
+
+/* Dnešní highlight — žlutá pro budoucí část */
+.fc-day-today {
+    --fc-today-bg-color: rgba(255, 200, 0, 0.25) !important;
 }
 
 /* ── Layout container ─────────────────────────────────── */

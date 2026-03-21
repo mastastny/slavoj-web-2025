@@ -27,9 +27,12 @@ func main() {
 	server := handlers.NewServer(db)
 
 	courts := []models.Court{
-		{ID: 1, Name: "Hřiště 1"},
-		{ID: 2, Name: "Hřiště 2"},
-		{ID: 3, Name: "Hřiště 3"},
+		{ID: 1, Name: "multifunkční hřiště"},
+		{ID: 2, Name: "tenisový kurt č. 1 (antuka)"},
+		{ID: 3, Name: "tenisový kurt č. 2 (antuka)"},
+		{ID: 4, Name: "volejbalové kurty"},
+		{ID: 5, Name: "tartanová dráha"},
+		{ID: 6, Name: "travnaté hřiště"},
 	}
 
 	eventRepository := repository.NewEventRepository(db)

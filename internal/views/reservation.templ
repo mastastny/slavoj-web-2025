@@ -5,6 +5,10 @@ import (
   "github.com/mastastny/slavoj-web-2025/internal/models"
 )
 
+script callSelectCourt(id int) {
+    selectCourt(id)
+}
+
 
 templ ReservationHead() {
  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
@@ -154,15 +158,18 @@ templ Reservation(courts []models.Court) {
           <div class="areal mx-auto">
             <img src="/images/areal.png" alt="Sportoviště" class="areal_img">
             <div class="areal_overlay">
-              for i, court := range courts {
-                <button
-                  class={ "zone", templ.KV("zone--rect", i < 2), templ.KV("zone--poly", i >= 2), templ.KV("zone--active", i == 0), fmt.Sprintf("hriste-%d", court.ID) }
-                  data-court={ fmt.Sprintf("%d", court.ID) }
-                  aria-label={ court.Name }
-                  hx-on:click={ fmt.Sprintf("selectCourt(%d)", court.ID) }>
-                  { court.Name }
-                </button>
-              }
+                <button class="zone zone--rect hriste-1 zone--active" data-court="2" aria-label="Hřiště 1" hx-on:click="selectCourt(2)">tenisový kurt 1</button>
+                <button class="zone zone--rect hriste-2" data-court="3" aria-label="Hřiště 2" hx-on:click="selectCourt(3)">tenisový kurt 2</button>
+                <button class="zone zone--poly hriste-3" data-court="6" aria-label="Hřiště 3" hx-on:click="selectCourt(6)">travnaté hřiště</button>
+                <!--              for i, court := range courts {-->
+<!--                <button-->
+<!--                  class={ "zone", templ.KV("zone&#45;&#45;rect", i < 2), templ.KV("zone&#45;&#45;poly", i >= 2), templ.KV("zone&#45;&#45;active", i == 0), "hriste-" + fmt.Sprint(court.ID) }-->
+<!--                  data-court={ fmt.Sprint(court.ID) }-->
+<!--                  aria-label={ court.Name }-->
+<!--                  onclick={ callSelectCourt(court.ID) }>-->
+<!--                  { court.Name }-->
+<!--                </button>-->
+<!--              }-->
             </div>
           </div>
         </div>
@@ -187,8 +194,8 @@ templ Reservation(courts []models.Court) {
                   <button
                     type="button"
                     class={ "list-group-item", "list-group-item-action", templ.KV("active", i == 0) }
-                    data-court={ fmt.Sprintf("%d", court.ID) }
-                    onclick={ templ.SafeScript(fmt.Sprintf("selectCourt(%d)", court.ID)) }>
+                    data-court={ fmt.Sprint(court.ID) }
+                    onclick={ callSelectCourt(court.ID) }>
                     { court.Name }
                     <i class="fa fa-info-circle ml-auto text-muted" title="Info"></i>
                   </button>

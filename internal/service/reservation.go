@@ -14,11 +14,13 @@ import (
 
 type Reservation struct {
 	eventRepository repository.EventRepository
+	emailService    Email
 }
 
-func ConstructReservation(eventRepository repository.EventRepository) *Reservation {
+func ConstructReservation(eventRepository repository.EventRepository, email Email) *Reservation {
 	return &Reservation{
 		eventRepository: eventRepository,
+		emailService:    email,
 	}
 }
 
@@ -42,6 +44,17 @@ func (ns *Reservation) Create(newReservation reservation.Service) error {
 	}
 
 	slog.Info("Created new event", "reservation", fmt.Sprintf("%#v", newReservation))
+
+	area, err := ns.eventRepository.GetCourtByID(newReservation.Area)
+	if err != nil {
+		return fmt.Errorf("service.Reservation-Create - unable to get area name %w", err)
+	}
+
+	// todo
+	if err := ns.emailService.SendConfirmation(newReservation, area.Name, "1234", "link"); err != nil {
+		return fmt.Errorf("service.Reservation-Create - unable to send confirmation: %w", err)
+	}
+
 	return nil
 }
 

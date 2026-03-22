@@ -15,6 +15,7 @@ import (
 	"github.com/mastastny/slavoj-web-2025/internal/models"
 	"github.com/mastastny/slavoj-web-2025/internal/repository"
 	"github.com/mastastny/slavoj-web-2025/internal/service"
+	"github.com/mastastny/slavoj-web-2025/internal/service/resendEmail"
 )
 
 var echoLambda *echoadapter.EchoLambdaV2
@@ -24,7 +25,6 @@ func main() {
 
 	db := database.Init()
 	defer db.Close()
-	server := handlers.NewServer(db)
 
 	courts := []models.Court{
 		{ID: 1, Name: "multifunkční hřiště"},
@@ -35,9 +35,11 @@ func main() {
 		{ID: 6, Name: "travnaté hřiště"},
 	}
 
-	eventRepository := repository.NewEventRepository(db)
-	reservationService := service.ConstructReservation(eventRepository)
+	eventRepository := repository.NewEventRepository(db, courts)
+	emailService := resendEmail.NewEmail(conf)
+	reservationService := service.ConstructReservation(eventRepository, emailService)
 	reservationHandler := handlers.Construct(reservationService, courts)
+	server := handlers.NewServer(eventRepository)
 
 	e := echo.New()
 	e.Static("/", "static")

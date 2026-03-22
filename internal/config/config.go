@@ -17,6 +17,7 @@ type Config struct {
 	Auth         Auth
 	Firebase     Firebase
 	SendGrid     SendGrid
+	Resend       Resend
 	Areal        Areal
 }
 
@@ -44,6 +45,10 @@ type SendGrid struct {
 	FromEmail   string `env:"SENDGRID_FROM_EMAIL" envRequired:"true"`
 	FromName    string `env:"SENDGRID_FROM_NAME" envDefault:"Newsletter Platform"`
 	UseEURegion bool   `env:"SENDGRID_USE_EU_REGION" envDefault:"false"`
+}
+
+type Resend struct {
+	APIKey string `env:"RESEND_API_KEY" envRequired:"true"`
 }
 
 type Auth struct {

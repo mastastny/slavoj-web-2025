@@ -22,14 +22,35 @@ var createEvent string
 type EventRepository interface {
 	GetEventsByCourtAndRange(courtID, startStr, endStr string) ([]models.Event, error)
 	CreateEvent(event reservation.Service) error
+	GetCourtByID(id int) (models.Court, error)
+	GetCourts() []models.Court
 }
 
 type SqliteEventRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	courts []models.Court
 }
 
-func NewEventRepository(db *sql.DB) EventRepository {
-	return &SqliteEventRepository{db: db}
+func NewEventRepository(db *sql.DB, courts []models.Court) EventRepository {
+	for _, c := range courts {
+		if _, err := db.Exec(`INSERT OR IGNORE INTO courts (id, name) VALUES (?, ?)`, c.ID, c.Name); err != nil {
+			panic(fmt.Errorf("NewEventRepository: seed court %d: %w", c.ID, err))
+		}
+	}
+	return &SqliteEventRepository{db: db, courts: courts}
+}
+
+func (r *SqliteEventRepository) GetCourts() []models.Court {
+	return r.courts
+}
+
+func (r *SqliteEventRepository) GetCourtByID(id int) (models.Court, error) {
+	for _, c := range r.courts {
+		if c.ID == id {
+			return c, nil
+		}
+	}
+	return models.Court{}, fmt.Errorf("court with id %d not found", id)
 }
 
 func (r *SqliteEventRepository) CreateEvent(event reservation.Service) error {

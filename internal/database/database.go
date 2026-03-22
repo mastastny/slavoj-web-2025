@@ -27,14 +27,6 @@ func Init() *sql.DB {
 		panic(err)
 	}
 
-	if _, err := db.Exec(`INSERT OR IGNORE INTO courts (id,name) VALUES (1,'Kurt #1')`); err != nil {
-		panic(err)
-	}
-
-	if _, err := db.Exec(`INSERT OR IGNORE INTO courts (id,name) VALUES (2,'Kurt #2')`); err != nil {
-		panic(err)
-	}
-
 	return db
 }
 

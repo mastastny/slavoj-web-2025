@@ -17,6 +17,11 @@ type Config struct {
 	Auth         Auth
 	Firebase     Firebase
 	SendGrid     SendGrid
+	Areal        Areal
+}
+
+type Areal struct {
+	CabinetLockCode int `env:"AREAL_CABINET_LOCK_CODE" envRequired:"true"`
 }
 
 type Postgres struct {

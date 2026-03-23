@@ -71,6 +71,12 @@ templ ReservationConfirmation(r reservation.Service, courtName string, lockCode 
                         <td style="color:#666; font-size:13px;">Počet hráčů</td>
                         <td style="font-weight:bold;">{ fmt.Sprintf("%d", r.PlayerCount) }</td>
                       </tr>
+                      if r.Notes != "" {
+                      <tr>
+                        <td style="color:#666; font-size:13px;">Poznámka</td>
+                        <td style="font-weight:bold;">{ r.Notes }</td>
+                      </tr>
+                      }
                     </table>
                   </td>
                 </tr>

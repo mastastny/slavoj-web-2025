@@ -38,8 +38,9 @@ func main() {
 
 	eventRepository := repository.NewEventRepository(db, courts)
 	lockerService := service.NewLockerService(conf)
+	linkCoder := service.NewLinkCoder(conf)
 	emailService := resendEmail.NewEmail(conf)
-	reservationService := service.ConstructReservation(eventRepository, emailService, lockerService)
+	reservationService := service.ConstructReservation(eventRepository, emailService, lockerService, linkCoder, conf.PublicDomain)
 	reservationHandler := handlers.Construct(reservationService, courts)
 	server := handlers.NewServer(eventRepository)
 
@@ -61,6 +62,7 @@ func main() {
 
 	e.POST("/api/reservation", reservationHandler.PostReservation)
 	e.GET("/api/reservation/form", handlers.GetModalBookingForm)
+	e.GET("/reservation/cancel/:encodedId", reservationHandler.DeleteReservation)
 
 	if os.Getenv("AWS_LAMBDA_FUNCTION_NAME") != "" {
 		echoLambda = echoadapter.NewV2(e)

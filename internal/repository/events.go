@@ -19,9 +19,13 @@ var getEventsByCourtAndRange string
 //go:embed queries/create_event.sql
 var createEvent string
 
+//go:embed queries/delete_event.sql
+var deleteEvent string
+
 type EventRepository interface {
 	GetEventsByCourtAndRange(courtID, startStr, endStr string) ([]models.Event, error)
-	CreateEvent(event reservation.Service) error
+	CreateEvent(event reservation.Service) (int64, error)
+	DeleteEvent(id int64) error
 	GetCourtByID(id int) (models.Court, error)
 	GetCourts() []models.Court
 }
@@ -40,6 +44,14 @@ func NewEventRepository(db *sql.DB, courts []models.Court) EventRepository {
 	return &SqliteEventRepository{db: db, courts: courts}
 }
 
+func (r *SqliteEventRepository) DeleteEvent(id int64) error {
+	_, err := r.db.Exec(deleteEvent, id)
+	if err != nil {
+		return fmt.Errorf("EventRepository-DeleteEvent: %w", err)
+	}
+	return nil
+}
+
 func (r *SqliteEventRepository) GetCourts() []models.Court {
 	return r.courts
 }
@@ -53,16 +65,18 @@ func (r *SqliteEventRepository) GetCourtByID(id int) (models.Court, error) {
 	return models.Court{}, fmt.Errorf("court with id %d not found", id)
 }
 
-func (r *SqliteEventRepository) CreateEvent(event reservation.Service) error {
-	_, err := r.db.Exec(createEvent, event.Area, event.Start, event.End, event.Name, event.Email)
+func (r *SqliteEventRepository) CreateEvent(event reservation.Service) (int64, error) {
+	result, err := r.db.Exec(createEvent, event.Area, event.Start, event.End, event.Name, event.Email)
 	if err != nil {
 		var sqliteErr sqlite3.Error
 		if errors.As(err, &sqliteErr) && sqliteErr.ExtendedCode == sqlite3.ErrConstraintTrigger {
-			return apperrors.ErrEventOverlap
+			return -1, apperrors.ErrEventOverlap
 		}
-		return fmt.Errorf("EventRepository-CreateEvent: %w", err)
+		return -1, fmt.Errorf("EventRepository-CreateEvent: %w", err)
 	}
-	return nil
+
+	id, _ := result.LastInsertId()
+	return id, nil
 }
 
 func (r *SqliteEventRepository) GetEventsByCourtAndRange(courtID, startStr, endStr string) ([]models.Event, error) {

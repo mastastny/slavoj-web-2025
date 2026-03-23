@@ -129,46 +129,69 @@ func ReservationConfirmation(r reservation.Service, courtName string, lockCode s
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</td></tr></table></td></tr></table><!-- Lock code --><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#fff8e1; border-left:4px solid #ec543d; border-radius:4px; margin-bottom:24px;\"><tr><td style=\"padding:16px;\"><p style=\"margin:0 0 4px; font-size:13px; color:#666;\">Kód pro otevření skříňky s klíčem od skladu je:</p><p style=\"margin:0; font-size:24px; font-weight:bold; letter-spacing:4px;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</td></tr>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var8 string
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(lockCode)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 84, Col: 105}
+		if r.Notes != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<tr><td style=\"color:#666; font-size:13px;\">Poznámka</td><td style=\"font-weight:bold;\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var8 string
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(r.Notes)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 77, Col: 63}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</td></tr>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</table></td></tr></table><!-- Lock code --><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#fff8e1; border-left:4px solid #ec543d; border-radius:4px; margin-bottom:24px;\"><tr><td style=\"padding:16px;\"><p style=\"margin:0 0 4px; font-size:13px; color:#666;\">Kód pro otevření skříňky s klíčem od skladu je:</p><p style=\"margin:0; font-size:24px; font-weight:bold; letter-spacing:4px;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</p></td></tr></table><!-- Cancel link --><p style=\"margin: 0 0 24px; color:#555; font-size:14px;\">Pro zrušení rezervace klikněte na následující odkaz:<br><a href=\"")
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(lockCode)
 		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var9 templ.SafeURL
-		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(cancelLink))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 92, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 90, Col: 105}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" style=\"color:#ec543d;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</p></td></tr></table><!-- Cancel link --><p style=\"margin: 0 0 24px; color:#555; font-size:14px;\">Pro zrušení rezervace klikněte na následující odkaz:<br><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var10 string
-		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(cancelLink)
+		var templ_7745c5c3_Var10 templ.SafeURL
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(cancelLink))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 92, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 98, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</a></p><p style=\"margin: 0; color:#555; font-size:14px;\">V případě dotazů nás kontaktujte na <a href=\"mailto:info@slavojlostice.cz\" style=\"color:#ec543d;\">info@slavojlostice.cz</a>.</p></td></tr><!-- Footer --><tr><td style=\"background:#f0f0f0; padding:16px 32px; font-size:12px; color:#999; text-align:center;\">TJ Slavoj Loštice &mdash; slavojlostice.cz</td></tr></table></td></tr></table></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" style=\"color:#ec543d;\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(cancelLink)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 98, Col: 89}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</a></p><p style=\"margin: 0; color:#555; font-size:14px;\">V případě dotazů nás kontaktujte na <a href=\"mailto:info@slavojlostice.cz\" style=\"color:#ec543d;\">info@slavojlostice.cz</a>.</p></td></tr><!-- Footer --><tr><td style=\"background:#f0f0f0; padding:16px 32px; font-size:12px; color:#999; text-align:center;\">TJ Slavoj Loštice &mdash; slavojlostice.cz</td></tr></table></td></tr></table></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

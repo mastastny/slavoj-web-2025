@@ -10,15 +10,16 @@ import "github.com/joho/godotenv"
 import "github.com/caarlos0/env/v11"
 
 type Config struct {
-	Port         int    `env:"SERVER_PORT" envDefault:"8080"`
-	PublicDomain string `env:"PUBLIC_DOMAIN" envDefault:"http://localhost"`
-	Secure       bool   `env:"SERVER_SECURE" envDefault:"true"`
-	Postgres     Postgres
-	Auth         Auth
-	Firebase     Firebase
-	SendGrid     SendGrid
-	Resend       Resend
-	Areal        Areal
+	Port          int    `env:"SERVER_PORT" envDefault:"8080"`
+	PublicDomain  string `env:"PUBLIC_DOMAIN" envDefault:"http://localhost"`
+	Secure        bool   `env:"SERVER_SECURE" envDefault:"true"`
+	LinkSecretKey string `env:"LINK_SECRET_KEY" envRequired:"true"`
+	Postgres      Postgres
+	Auth          Auth
+	Firebase      Firebase
+	SendGrid      SendGrid
+	Resend        Resend
+	Areal         Areal
 }
 
 type Areal struct {

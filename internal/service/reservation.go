@@ -17,14 +17,30 @@ type Reservation struct {
 	eventRepository repository.EventRepository
 	emailService    _interface.Email
 	locker          _interface.Locker
+	linkCoder       *LinkCoder
+	publicDomain    string
 }
 
-func ConstructReservation(eventRepository repository.EventRepository, email _interface.Email, locker _interface.Locker) *Reservation {
+func ConstructReservation(eventRepository repository.EventRepository, email _interface.Email, locker _interface.Locker, linkCoder *LinkCoder, publicDomain string) *Reservation {
 	return &Reservation{
 		eventRepository: eventRepository,
 		emailService:    email,
 		locker:          locker,
+		linkCoder:       linkCoder,
+		publicDomain:    publicDomain,
 	}
+}
+
+func (ns *Reservation) Cancel(encodedID string) error {
+	id, err := ns.linkCoder.Decode(encodedID)
+	if err != nil {
+		return fmt.Errorf("Reservation.Cancel - invalid id: %w", err)
+	}
+	if err := ns.eventRepository.DeleteEvent(id); err != nil {
+		return fmt.Errorf("Reservation.Cancel - unable to delete event: %w", err)
+	}
+	slog.Info("Reservation cancelled", "id", id)
+	return nil
 }
 
 func (ns *Reservation) Create(newReservation reservation.Service) error {
@@ -42,7 +58,8 @@ func (ns *Reservation) Create(newReservation reservation.Service) error {
 
 	fmt.Println("Service, vytvarim rezervaci")
 
-	if err := ns.eventRepository.CreateEvent(newReservation); err != nil {
+	eventId, err := ns.eventRepository.CreateEvent(newReservation)
+	if err != nil {
 		return fmt.Errorf("service.Reservation-Create - unable to create an event: %w", err)
 	}
 
@@ -53,10 +70,10 @@ func (ns *Reservation) Create(newReservation reservation.Service) error {
 		return fmt.Errorf("service.Reservation-Create - unable to get area name %w", err)
 	}
 
-	lockCode := ns.locker.GetLockerCode(start)
+	lockerCode := ns.locker.GetLockerCode(start)
+	cancelLink := ns.publicDomain + "/reservation/cancel/" + ns.linkCoder.Encode(eventId)
 
-	// todo
-	if err := ns.emailService.SendConfirmation(newReservation, area.Name, lockCode, "link"); err != nil {
+	if err := ns.emailService.SendConfirmation(newReservation, area.Name, lockerCode, cancelLink); err != nil {
 		return fmt.Errorf("service.Reservation-Create - unable to send confirmation: %w", err)
 	}
 

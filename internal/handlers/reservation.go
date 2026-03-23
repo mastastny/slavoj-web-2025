@@ -24,6 +24,15 @@ func Construct(reservationService *service.Reservation, courts []models.Court) *
 	}
 }
 
+func (rh *Reservation) DeleteReservation(c echo.Context) error {
+	encodedID := c.Param("encodedId")
+	if err := rh.reservationService.Cancel(encodedID); err != nil {
+		slog.Error("DeleteReservation error", "err", err)
+		return renderHTML(c, views.CancelReservationError())
+	}
+	return renderHTML(c, views.CancelReservationSuccess())
+}
+
 func (rh *Reservation) GetReservation(c echo.Context) error {
 	return renderHTML(c, views.Reservation(rh.courts))
 }

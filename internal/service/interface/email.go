@@ -1,4 +1,4 @@
-package service
+package _interface
 
 import "github.com/mastastny/slavoj-web-2025/internal/models/reservation"
 

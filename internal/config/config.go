@@ -22,7 +22,7 @@ type Config struct {
 }
 
 type Areal struct {
-	CabinetLockCode int `env:"AREAL_CABINET_LOCK_CODE" envRequired:"true"`
+	CabinetLockCode string `env:"AREAL_CABINET_LOCK_CODE"`
 }
 
 type Postgres struct {

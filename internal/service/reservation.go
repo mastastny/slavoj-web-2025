@@ -10,17 +10,20 @@ import (
 	"github.com/mastastny/slavoj-web-2025/internal/apperrors"
 	"github.com/mastastny/slavoj-web-2025/internal/models/reservation"
 	"github.com/mastastny/slavoj-web-2025/internal/repository"
+	"github.com/mastastny/slavoj-web-2025/internal/service/interface"
 )
 
 type Reservation struct {
 	eventRepository repository.EventRepository
-	emailService    Email
+	emailService    _interface.Email
+	locker          _interface.Locker
 }
 
-func ConstructReservation(eventRepository repository.EventRepository, email Email) *Reservation {
+func ConstructReservation(eventRepository repository.EventRepository, email _interface.Email, locker _interface.Locker) *Reservation {
 	return &Reservation{
 		eventRepository: eventRepository,
 		emailService:    email,
+		locker:          locker,
 	}
 }
 
@@ -50,8 +53,10 @@ func (ns *Reservation) Create(newReservation reservation.Service) error {
 		return fmt.Errorf("service.Reservation-Create - unable to get area name %w", err)
 	}
 
+	lockCode := ns.locker.GetLockerCode(start)
+
 	// todo
-	if err := ns.emailService.SendConfirmation(newReservation, area.Name, "1234", "link"); err != nil {
+	if err := ns.emailService.SendConfirmation(newReservation, area.Name, lockCode, "link"); err != nil {
 		return fmt.Errorf("service.Reservation-Create - unable to send confirmation: %w", err)
 	}
 

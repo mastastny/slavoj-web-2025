@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -36,11 +37,13 @@ func main() {
 	}
 
 	eventRepository := repository.NewEventRepository(db, courts)
+	lockerService := service.NewLockerService(conf)
 	emailService := resendEmail.NewEmail(conf)
-	reservationService := service.ConstructReservation(eventRepository, emailService)
+	reservationService := service.ConstructReservation(eventRepository, emailService, lockerService)
 	reservationHandler := handlers.Construct(reservationService, courts)
 	server := handlers.NewServer(eventRepository)
 
+	fmt.Println("LOCK: ", lockerService.GetLockerCode(time.Now()))
 	e := echo.New()
 	e.Static("/", "static")
 

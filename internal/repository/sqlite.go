@@ -1,10 +1,12 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 	_ "embed"
 	"errors"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/mastastny/slavoj-web-2025/internal/apperrors"
@@ -12,6 +14,9 @@ import (
 	"github.com/mastastny/slavoj-web-2025/internal/models/reservation"
 	"github.com/mattn/go-sqlite3"
 )
+
+//go:embed init.sql
+var sqliteInitSQL string
 
 //go:embed queries/get_events_by_court_and_range.sql
 var getEventsByCourtAndRange string
@@ -22,23 +27,30 @@ var createEvent string
 //go:embed queries/delete_event.sql
 var deleteEvent string
 
-type EventRepository interface {
-	GetEventsByCourtAndRange(courtID, startStr, endStr string) ([]models.Event, error)
-	CreateEvent(event reservation.Service) (int64, error)
-	DeleteEvent(id int64) error
-	GetCourtByID(id int) (models.Court, error)
-	GetCourts() []models.Court
-}
-
 type SqliteEventRepository struct {
 	db     *sql.DB
 	courts []models.Court
 }
 
-func NewEventRepository(db *sql.DB, courts []models.Court) EventRepository {
+func NewSqliteEventRepository(courts []models.Court) EventRepository {
+	dbPath := os.Getenv("DATABASE_PATH")
+	if dbPath == "" {
+		dbPath = "club.sqlite"
+	}
+	db, err := sql.Open("sqlite3", "file:"+dbPath+"?_foreign_keys=on&_busy_timeout=5000")
+	if err != nil {
+		panic(fmt.Errorf("NewSqliteEventRepository: open: %w", err))
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if _, err := db.ExecContext(ctx, sqliteInitSQL); err != nil {
+		panic(fmt.Errorf("NewSqliteEventRepository: migrate: %w", err))
+	}
+
 	for _, c := range courts {
 		if _, err := db.Exec(`INSERT OR IGNORE INTO courts (id, name) VALUES (?, ?)`, c.ID, c.Name); err != nil {
-			panic(fmt.Errorf("NewEventRepository: seed court %d: %w", c.ID, err))
+			panic(fmt.Errorf("NewSqliteEventRepository: seed court %d: %w", c.ID, err))
 		}
 	}
 	return &SqliteEventRepository{db: db, courts: courts}
@@ -47,7 +59,7 @@ func NewEventRepository(db *sql.DB, courts []models.Court) EventRepository {
 func (r *SqliteEventRepository) DeleteEvent(id int64) error {
 	_, err := r.db.Exec(deleteEvent, id)
 	if err != nil {
-		return fmt.Errorf("EventRepository-DeleteEvent: %w", err)
+		return fmt.Errorf("SqliteEventRepository-DeleteEvent: %w", err)
 	}
 	return nil
 }
@@ -72,7 +84,7 @@ func (r *SqliteEventRepository) CreateEvent(event reservation.Service) (int64, e
 		if errors.As(err, &sqliteErr) && sqliteErr.ExtendedCode == sqlite3.ErrConstraintTrigger {
 			return -1, apperrors.ErrEventOverlap
 		}
-		return -1, fmt.Errorf("EventRepository-CreateEvent: %w", err)
+		return -1, fmt.Errorf("SqliteEventRepository-CreateEvent: %w", err)
 	}
 
 	id, _ := result.LastInsertId()

@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"log/slog"
+
+	//"log/slog"
 	"os"
 	"time"
 
@@ -11,7 +14,6 @@ import (
 	echoadapter "github.com/awslabs/aws-lambda-go-api-proxy/echo"
 	"github.com/labstack/echo/v4"
 	config "github.com/mastastny/slavoj-web-2025/internal/config"
-	"github.com/mastastny/slavoj-web-2025/internal/database"
 	"github.com/mastastny/slavoj-web-2025/internal/handlers"
 	"github.com/mastastny/slavoj-web-2025/internal/models"
 	"github.com/mastastny/slavoj-web-2025/internal/repository"
@@ -24,9 +26,6 @@ var echoLambda *echoadapter.EchoLambdaV2
 func main() {
 	conf := config.NewConfig()
 
-	db := database.Init()
-	defer db.Close()
-
 	courts := []models.Court{
 		{ID: 1, Name: "multifunkční hřiště"},
 		{ID: 2, Name: "tenisový kurt č. 1 (antuka)"},
@@ -36,7 +35,23 @@ func main() {
 		{ID: 6, Name: "travnaté hřiště"},
 	}
 
-	eventRepository := repository.NewEventRepository(db, courts)
+	var eventRepository repository.EventRepository
+	if conf.Supabase.DatabaseURL != "" {
+		repo, err := repository.NewSupabaseEventRepository(conf.Supabase.DatabaseURL, courts)
+		if err != nil {
+			slog.Warn("supabase repository init failed, falling back to sqlite", "err", err)
+			eventRepository = repository.NewSqliteEventRepository(courts)
+		} else {
+			eventRepository = repo
+			slog.Info("supabase event repository created")
+		}
+	} else {
+		eventRepository = repository.NewSqliteEventRepository(courts)
+		slog.Info("sqlite event repository created")
+	}
+
+	//eventRepository = repository.NewSqliteEventRepository(courts)
+
 	lockerService := service.NewLockerService(conf)
 	linkCoder := service.NewLinkCoder(conf)
 	emailService := resendEmail.NewEmail(conf)

@@ -15,6 +15,7 @@ type Config struct {
 	Secure        bool   `env:"SERVER_SECURE" envDefault:"true"`
 	LinkSecretKey string `env:"LINK_SECRET_KEY" envRequired:"true"`
 	Postgres      Postgres
+	Supabase      Supabase
 	Auth          Auth
 	Firebase      Firebase
 	SendGrid      SendGrid
@@ -24,6 +25,10 @@ type Config struct {
 
 type Areal struct {
 	CabinetLockCode string `env:"AREAL_CABINET_LOCK_CODE"`
+}
+
+type Supabase struct {
+	DatabaseURL string `env:"SUPABASE_DATABASE_URL"`
 }
 
 type Postgres struct {

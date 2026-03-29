@@ -6,23 +6,35 @@ import (
 )
 
 func GetHome(c echo.Context) error {
-	return renderHTML(c, views.Layout("TJ Slavoj Loštice"))
+	return renderHTML(c, views.Layout("TJ Slavoj Loštice", views.Home()))
 }
 
 func GetAbout(c echo.Context) error {
-	return renderHTML(c, views.About())
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return renderHTML(c, views.About())
+	}
+	return renderHTML(c, views.Layout("TJ Slavoj Loštice", views.About()))
 }
 
 func GetAreals(c echo.Context) error {
-	return renderHTML(c, views.Areals())
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return renderHTML(c, views.Areals())
+	}
+	return renderHTML(c, views.Layout("TJ Slavoj Loštice", views.Areals()))
 }
 
 func GetMembership(c echo.Context) error {
-	return renderHTML(c, views.Membership())
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return renderHTML(c, views.Membership())
+	}
+	return renderHTML(c, views.Layout("Členství | TJ Slavoj Loštice", views.Membership()))
 }
 
 func GetContacts(c echo.Context) error {
-	return renderHTML(c, views.Contacts())
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return renderHTML(c, views.Contacts())
+	}
+	return renderHTML(c, views.Layout("Kontakty | TJ Slavoj Loštice", views.Contacts()))
 }
 
 func GetModal(c echo.Context) error {
@@ -34,7 +46,10 @@ func GetModalBookingForm(c echo.Context) error {
 }
 
 func GetDocuments(c echo.Context) error {
-	return renderHTML(c, views.Documents())
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return renderHTML(c, views.Documents())
+	}
+	return renderHTML(c, views.Layout("Dokumenty | TJ Slavoj Loštice", views.Documents()))
 }
 
 func GetHomeContent(c echo.Context) error {

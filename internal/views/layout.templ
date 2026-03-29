@@ -1,6 +1,6 @@
 package views
 
-templ Layout(title string) {
+templ Layout(title string, content templ.Component) {
 <!--	<html>-->
 <!--		<head>-->
 <!--			<title>{title}</title>-->
@@ -104,19 +104,19 @@ templ Layout(title string) {
 <!--                        </a>-->
 <!--                    </li>-->
                     <li class="nav-item">
-                        <a class="nav-link" hx-get="/home" hx-target="#centre-page">Domů</a>
+                        <a class="nav-link" hx-get="/home" hx-target="#centre-page" hx-push-url="/home">Domů</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" hx-get="/reservation" hx-target="#centre-page">Online rezervace</a>
+                        <a class="nav-link" hx-get="/reservation" hx-target="#centre-page" hx-push-url="/reservation">Online rezervace</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" hx-get="/membership" hx-target="#centre-page">Členství</a>
+                        <a class="nav-link" hx-get="/membership" hx-target="#centre-page" hx-push-url="/membership">Členství</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" hx-get="/documents" hx-target="#centre-page">Dokumenty</a>
+                        <a class="nav-link" hx-get="/documents" hx-target="#centre-page" hx-push-url="/documents">Dokumenty</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" hx-get="/contacts" hx-target="#centre-page">Kontakty</a>
+                        <a class="nav-link" hx-get="/contacts" hx-target="#centre-page" hx-push-url="/contacts">Kontakty</a>
                     </li>
 <!--                    <li class="nav-item">-->
 <!--                        <a class="nav-link" href="one-page.html">One Page</a>-->
@@ -129,7 +129,7 @@ templ Layout(title string) {
 
 
 <div id="centre-page" hx-on::after-swap="initCalendar()">
-@Home()
+@content
 </div>
 
 <!-- Footer Starts Here -->
@@ -147,11 +147,11 @@ templ Layout(title string) {
             <div class="col-md-3 footer-item">
                 <h4>Navigace</h4>
                 <ul class="menu-list">
-                    <li><a hx-get="/home" hx-target="#centre-page" href="#">Domů</a></li>
-                    <li><a hx-get="/reservation" hx-target="#centre-page" href="#">Online rezervace</a></li>
-                    <li><a hx-get="/membership" hx-target="#centre-page" href="#">Členství</a></li>
-                    <li><a hx-get="/documents" hx-target="#centre-page" href="#">Dokumenty</a></li>
-                    <li><a hx-get="/contacts" hx-target="#centre-page" href="#">Kontakty</a></li>
+                    <li><a hx-get="/home" hx-target="#centre-page" hx-push-url="/home" href="#">Domů</a></li>
+                    <li><a hx-get="/reservation" hx-target="#centre-page" hx-push-url="/reservation" href="#">Online rezervace</a></li>
+                    <li><a hx-get="/membership" hx-target="#centre-page" hx-push-url="/membership" href="#">Členství</a></li>
+                    <li><a hx-get="/documents" hx-target="#centre-page" hx-push-url="/documents" href="#">Dokumenty</a></li>
+                    <li><a hx-get="/contacts" hx-target="#centre-page" hx-push-url="/contacts" href="#">Kontakty</a></li>
                 </ul>
             </div>
             <div class="col-md-3 footer-item">

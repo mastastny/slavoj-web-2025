@@ -1,4 +1,4 @@
-FROM golang:1.24-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /workdir
 
@@ -16,7 +16,7 @@ FROM alpine:latest AS runner
 
 WORKDIR /rundir
 
-RUN apk --no-cache add ca-certificates
+RUN apk --no-cache add ca-certificates tzdata
 
 COPY --from=builder /workdir/bin/server ./server
 COPY --from=builder /workdir/static ./static

@@ -23,9 +23,6 @@ func formatReservationTime(iso string) string {
 	return t.Local().Format("15:04")
 }
 
-func courtLabel(areaID int) string {
-	return fmt.Sprintf("Kurt #%d", areaID)
-}
 
 templ ReservationError(msg string) {
 	<div class="modal-header">
@@ -42,7 +39,7 @@ templ ReservationError(msg string) {
 	</div>
 }
 
-templ ReservationResult(r reservation.Handler) {
+templ ReservationResult(r reservation.Handler, courtName string) {
 	<div class="modal-header">
 		<h5 class="modal-title">Rezervace potvrzena</h5>
 		<button type="button" class="close" data-dismiss="modal" aria-label="Zavřít">
@@ -55,27 +52,27 @@ templ ReservationResult(r reservation.Handler) {
 			<h5 class="mt-2">Rezervace úspěšně vytvořena</h5>
 		</div>
 		<div class="bg-light p-3 rounded mb-3">
-			<div class="d-flex align-items-center justify-content-between flex-wrap">
-				<div class="mb-2">
+			<div class="d-flex justify-content-between mb-2">
+				<div>
 					<div class="small text-muted">Datum</div>
 					<div class="font-weight-bold">{ formatReservationDate(r.Start) }</div>
 				</div>
-				<div class="mb-2">
+				<div>
 					<div class="small text-muted">Od</div>
 					<div class="font-weight-bold">{ formatReservationTime(r.Start) }</div>
 				</div>
-				<div class="mb-2">
+				<div>
 					<div class="small text-muted">Do</div>
 					<div class="font-weight-bold">{ formatReservationTime(r.End) }</div>
 				</div>
-				<div class="mb-2">
-					<div class="small text-muted">Hřiště</div>
-					<div class="font-weight-bold">{ courtLabel(r.Area) }</div>
-				</div>
-				<div class="mb-2">
+				<div>
 					<div class="small text-muted">Hráči</div>
 					<div class="font-weight-bold">{ fmt.Sprintf("%d", r.PlayerCount) }</div>
 				</div>
+			</div>
+			<div>
+				<div class="small text-muted">Hřiště</div>
+				<div class="font-weight-bold">{ courtName }</div>
 			</div>
 		</div>
 		<p class="text-muted text-center small mb-0">

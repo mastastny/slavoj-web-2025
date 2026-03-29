@@ -13,7 +13,7 @@ templ ModalBookingForm() {
         <div class="modal-body">
             <!-- Summary -->
             <div class="bg-light p-3 rounded mb-3">
-                <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex justify-content-between mb-2">
                     <div>
                         <div class="small text-muted">Datum</div>
                         <div class="font-weight-bold" id="bk-date-display">—</div>
@@ -30,10 +30,10 @@ templ ModalBookingForm() {
                         <div class="small text-muted">Délka</div>
                         <div class="font-weight-bold" id="bk-duration-display">—</div>
                     </div>
-                    <div>
-                        <div class="small text-muted">Hřiště</div>
-                        <div class="font-weight-bold" id="bk-area-display">—</div>
-                    </div>
+                </div>
+                <div>
+                    <div class="small text-muted">Hřiště</div>
+                    <div class="font-weight-bold" id="bk-area-display">—</div>
                 </div>
             </div>
 
@@ -74,7 +74,7 @@ templ ModalBookingForm() {
 
             <div class="form-group">
                 <label for="bk-notes">Poznámka (volitelná)</label>
-                <textarea class="form-control" id="bk-notes" name="notes" rows="2" placeholder="Cokoliv, co bychom měli vědět? Např. zapůjčení rakety."></textarea>
+                <textarea class="form-control" id="bk-notes" name="notes" rows="2" placeholder="Cokoliv, co bychom měli vědět?"></textarea>
             </div>
 
 
@@ -85,7 +85,7 @@ templ ModalBookingForm() {
             </div>
 
 
-            <div class="custom-control custom-checkbox">
+            <div class="custom-control custom-checkbox" style="display:none">
                 <input type="checkbox" class="custom-control-input" id="bk-reminder" name="reminder" checked>
                 <label class="custom-control-label" for="bk-reminder">Pošlete mi připomínku 24 hodin předem</label>
             </div>

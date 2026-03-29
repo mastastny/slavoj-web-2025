@@ -7,7 +7,6 @@ import (
 
 	//"log/slog"
 	"os"
-	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -59,7 +58,6 @@ func main() {
 	reservationHandler := handlers.Construct(reservationService, courts)
 	server := handlers.NewServer(eventRepository)
 
-	fmt.Println("LOCK: ", lockerService.GetLockerCode(time.Now()))
 	e := echo.New()
 	e.Static("/", "static")
 

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"log/slog"
 
 	"github.com/labstack/echo/v4"
@@ -34,7 +35,10 @@ func (rh *Reservation) DeleteReservation(c echo.Context) error {
 }
 
 func (rh *Reservation) GetReservation(c echo.Context) error {
-	return renderHTML(c, views.Reservation(rh.courts))
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return renderHTML(c, views.Reservation(rh.courts))
+	}
+	return renderHTML(c, views.Layout("Rezervace | TJ Slavoj Loštice", views.Reservation(rh.courts)))
 }
 
 func (rh *Reservation) PostReservation(c echo.Context) error {
@@ -61,7 +65,14 @@ func (rh *Reservation) PostReservation(c echo.Context) error {
 		return renderHTML(c, views.ReservationError("Bohužel právě nejsme schopni vytvořit rezervaci kvůli interní chybě. Zkuste prosím akci opakovat později, nebo kontaktujte administrátora."))
 	}
 
-	return renderHTML(c, views.ReservationResult(form))
+	courtName := fmt.Sprintf("Kurt #%d", form.Area)
+	for _, court := range rh.courts {
+		if court.ID == form.Area {
+			courtName = court.Name
+			break
+		}
+	}
+	return renderHTML(c, views.ReservationResult(form, courtName))
 }
 
 func handlerToService(f reservation.Handler) reservation.Service {

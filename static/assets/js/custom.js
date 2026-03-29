@@ -124,7 +124,7 @@ jQuery( document ).ready(function( $ ) {
 
         $(window).scroll(function(){
 
-          if(visible($('.count-digit')))
+          if($('.count-digit').length && visible($('.count-digit')))
             {
               if($('.count-digit').hasClass('counter-loaded')) return;
               $('.count-digit').addClass('counter-loaded');

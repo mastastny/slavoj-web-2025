@@ -45,11 +45,13 @@ templ ReservationHead() {
     function openSummaryModal() {
         var sel = window.currentSelection;
         if (!sel) return;
+        var courtBtn = document.querySelector('.res-court-list .list-group-item.active');
+        var courtName = courtBtn ? courtBtn.childNodes[0].textContent.trim() : 'Hřiště ' + window.currentCourtId;
         openBookingModal({
             date:      sel.start.toISOString().slice(0, 10),
             startTime: sel.start,
             endTime:   sel.end,
-            area:      'Hřiště ' + window.currentCourtId,
+            area:      courtName,
             areaId:    window.currentCourtId
         });
     }

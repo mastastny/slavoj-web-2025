@@ -53,5 +53,8 @@ func GetDocuments(c echo.Context) error {
 }
 
 func GetHomeContent(c echo.Context) error {
-	return renderHTML(c, views.Home())
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return renderHTML(c, views.Home())
+	}
+	return renderHTML(c, views.Layout("TJ Slavoj Loštice", views.Home()))
 }

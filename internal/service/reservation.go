@@ -56,8 +56,6 @@ func (ns *Reservation) Create(newReservation reservation.Service) error {
 		return apperrors.ErrEventInThePast
 	}
 
-	fmt.Println("Service, vytvarim rezervaci")
-
 	eventId, err := ns.eventRepository.CreateEvent(newReservation)
 	if err != nil {
 		return fmt.Errorf("service.Reservation-Create - unable to create an event: %w", err)

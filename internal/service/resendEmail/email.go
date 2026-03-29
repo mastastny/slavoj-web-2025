@@ -17,7 +17,6 @@ type Email struct {
 }
 
 func NewEmail(conf config.Config) *Email {
-	fmt.Println("XXXX", conf.Resend.APIKey)
 	client := resend.NewClient(conf.Resend.APIKey)
 	return &Email{client: client}
 }

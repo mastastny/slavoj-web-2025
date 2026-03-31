@@ -19,7 +19,7 @@ func fmtDate(iso string) string {
 	if err != nil {
 		return iso
 	}
-	return t.Local().Format("02.01.2006")
+	return t.UTC().Format("02.01.2006")
 }
 
 func fmtTime(iso string) string {
@@ -27,7 +27,7 @@ func fmtTime(iso string) string {
 	if err != nil {
 		return iso
 	}
-	return t.Local().Format("15:04")
+	return t.UTC().Format("15:04")
 }
 
 func ReservationConfirmation(r reservation.Service, courtName string, lockCode string, cancelLink string) templ.Component {

@@ -138,9 +138,12 @@ templ Modal() {
         }
 
         // Utility: format a Date object as HH:MM
+        // FullCalendar with named timezone gives "fake UTC" dates where UTC = Prague local time
         function formatTime(dt) {
             if (!dt) return '—';
-            return dt.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' });
+            var h = String(dt.getUTCHours()).padStart(2, '0');
+            var m = String(dt.getUTCMinutes()).padStart(2, '0');
+            return h + ':' + m;
         }
 
         // Utility: calculate Czech duration string from two Date objects

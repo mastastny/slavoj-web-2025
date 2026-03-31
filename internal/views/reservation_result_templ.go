@@ -20,7 +20,7 @@ func formatReservationDate(iso string) string {
 	if err != nil {
 		return iso
 	}
-	return t.Local().Format("02.01.2006")
+	return t.UTC().Format("02.01.2006")
 }
 
 func formatReservationTime(iso string) string {
@@ -28,7 +28,7 @@ func formatReservationTime(iso string) string {
 	if err != nil {
 		return iso
 	}
-	return t.Local().Format("15:04")
+	return t.UTC().Format("15:04")
 }
 
 func ReservationError(msg string) templ.Component {

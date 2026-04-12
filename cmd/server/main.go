@@ -70,6 +70,7 @@ func main() {
 	e.GET("/modal", handlers.GetModal)
 	e.GET("/documents", handlers.GetDocuments)
 	e.GET("/home", handlers.GetHomeContent)
+	e.GET("/novinky/1", handlers.GetNovinka1)
 
 	e.GET("/api/events", server.GetEvents)
 

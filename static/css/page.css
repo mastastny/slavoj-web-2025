@@ -5,7 +5,31 @@
     flex-direction: column;
 }
 
+#centre-page {
+    padding-bottom: 4rem;
+}
+
 .nav-link {
     cursor: pointer;
+}
+
+.gallery-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.gallery-strip a img {
+    height: 22vh;
+    max-height: 220px;
+    width: auto;
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: opacity 0.2s;
+}
+
+.gallery-strip a img:hover {
+    opacity: 0.85;
 }
 

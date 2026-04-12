@@ -38,43 +38,53 @@ templ Home() {
 
 <div class="services">
     <div class="container">
-        <div class="row">
+        <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="section-heading">
-                    <h2>Tady můžou být novinky a <em>pozvánky na akce</em></h2>
-                    <span>Aliquam id urna imperdiet libero mollis hendrerit</span>
+                    <h2>Pozvánky na akce a <em>novinky</em></h2>
+<!--                    <span>Aliquam id urna imperdiet libero mollis hendrerit</span>-->
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="service-item">
-                    <img src="/images/favicon/web-app-manifest-512x512.png" alt="">
+                    <img src="/images/novinka1/selfie.jpg" alt="">
                     <div class="down-content">
-                        <h4>Novinka 1</h4>
-                        <p>Sed tincidunt dictum lobortis. Aenean tempus diam vel augue luctus dignissim. Nunc ornare leo tortor.</p>
-                        <a href="" class="filled-button">Read More</a>
+                        <h4>Úspěšný sportovec okresu Šumperk za rok 2025</h4>
+                        <p>Za rok 2025 byli vyhodnoceni naši sportovci TJ Slavoj Loštice z.s. v rámci výzvy "Úspěšný sportovec okresu Šumperk za rok 2025" . Oceněno bylo v kategorii dospělých družstev družstvo volejbalu žen, které se v loňském roce probojovalo do 2. ligy a v kategorii osobnost v oblasti sportu Vladimír Kindl, dlouholetý předseda TJ Slavoj. Ten obdržel i ocenění Výboru ČUS.</p>
+                        <a href="/novinky/1" hx-get="/novinky/1" hx-target="#centre-page" hx-swap="innerHTML show:window:top" hx-push-url="/novinky/1" class="filled-button">Dozvědět se více</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="service-item">
-                    <img src="/images/favicon/web-app-manifest-512x512.png" alt="">
-                    <div class="down-content">
-                        <h4>Odkaz na fotky z akce</h4>
-                        <p>Sed tincidunt dictum lobortis. Aenean tempus diam vel augue luctus dignissim. Nunc ornare leo tortor.</p>
-                        <a href="" class="filled-button">Read More</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="service-item">
-                    <img src="/images/favicon/web-app-manifest-512x512.png" alt="">
-                    <div class="down-content">
-                        <h4>Rozpis akcí na danou sezónu</h4>
-                        <p>Sed tincidunt dictum lobortis. Aenean tempus diam vel augue luctus dignissim. Nunc ornare leo tortor.</p>
-                        <a href="" class="filled-button">Read More</a>
-                    </div>
-                </div>
-            </div>
+<!--            <div class="col-md-4">-->
+<!--                <div class="service-item">-->
+<!--                    <img src="/images/favicon/web-app-manifest-512x512.png" alt="">-->
+<!--                    <div class="down-content">-->
+<!--                        <h4>Odkaz na fotky z akce</h4>-->
+<!--                        <p>Sed tincidunt dictum lobortis. Aenean tempus diam vel augue luctus dignissim. Nunc ornare leo tortor.</p>-->
+<!--                        <a href="" class="filled-button">Read More</a>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="col-md-4">-->
+<!--                <div class="service-item">-->
+<!--                    <img src="/images/favicon/web-app-manifest-512x512.png" alt="">-->
+<!--                    <div class="down-content">-->
+<!--                        <h4>Rozpis akcí na danou sezónu</h4>-->
+<!--                        <p>Sed tincidunt dictum lobortis. Aenean tempus diam vel augue luctus dignissim. Nunc ornare leo tortor.</p>-->
+<!--                        <a href="" class="filled-button">Read More</a>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="col-md-4">-->
+<!--                <div class="service-item">-->
+<!--                    <img src="/images/favicon/web-app-manifest-512x512.png" alt="">-->
+<!--                    <div class="down-content">-->
+<!--                        <h4>Odkaz na fotky z akce</h4>-->
+<!--                        <p>Sed tincidunt dictum lobortis. Aenean tempus diam vel augue luctus dignissim. Nunc ornare leo tortor.</p>-->
+<!--                        <a href="" class="filled-button">Read More</a>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
     </div>
 </div>
@@ -123,23 +133,24 @@ templ Home() {
 <!--    </div>-->
 <!--</div>-->
 
-<!--<div class="more-info">-->
-<!--    <div class="container">-->
-<!--        <div class="row">-->
-<!--            <div class="col-md-12">-->
-<!--                <div class="more-info-content">-->
-<!--                    <div class="row">-->
-<!--                        <div class="col-md-6">-->
-<!--                            <div class="left-image">-->
-<!--                                <img src="assets/images/more-info.jpg" alt="">-->
+<!--    <div class="more-info">-->
+<!--        <div class="container">-->
+<!--            <div class="row">-->
+<!--                <div class="col-md-12">-->
+<!--                    <div class="more-info-content">-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-6">-->
+<!--                                <div class="left-image">-->
+<!--                                    <img src="assets/images/more-info.jpg" alt="">-->
+<!--                                </div>-->
 <!--                            </div>-->
-<!--                        </div>-->
-<!--                        <div class="col-md-6 align-self-center">-->
-<!--                            <div class="right-content">-->
-<!--                                <span>Who we are</span>-->
-<!--                                <h2>Get to know about <em>our company</em></h2>-->
-<!--                                <p>Curabitur pulvinar sem a leo tempus facilisis. Sed non sagittis neque. Nulla conse quat tellus nibh, id molestie felis sagittis ut. Nam ullamcorper tempus ipsum in cursus<br><br>Praes end at dictum metus. Morbi id hendrerit lectus, nec dapibus ex. Etiam ipsum quam, luctus eu egestas eget, tincidunt</p>-->
-<!--                                <a href="#" class="filled-button">Read More</a>-->
+<!--                            <div class="col-md-6 align-self-center">-->
+<!--                                <div class="right-content">-->
+<!--                                    <span>Who we are</span>-->
+<!--                                    <h2>Get to know about <em>our company</em></h2>-->
+<!--                                    <p>Curabitur pulvinar sem a leo tempus facilisis. Sed non sagittis neque. Nulla conse quat tellus nibh, id molestie felis sagittis ut. Nam ullamcorper tempus ipsum in cursus<br><br>Praes end at dictum metus. Morbi id hendrerit lectus, nec dapibus ex. Etiam ipsum quam, luctus eu egestas eget, tincidunt</p>-->
+<!--                                    <a href="#" class="filled-button">Read More</a>-->
+<!--                                </div>-->
 <!--                            </div>-->
 <!--                        </div>-->
 <!--                    </div>-->
@@ -147,7 +158,6 @@ templ Home() {
 <!--            </div>-->
 <!--        </div>-->
 <!--    </div>-->
-<!--</div>-->
 
 <!--<div class="testimonials">-->
 <!--    <div class="container">-->

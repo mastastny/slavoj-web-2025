@@ -1,0 +1,51 @@
+package views
+
+type NovinkaPhoto struct {
+	Src string
+	Alt string
+}
+
+type NovinkaDef struct {
+	Title  string
+	Text   string
+	Photos []NovinkaPhoto
+}
+
+templ Novinka(n NovinkaDef) {
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css"/>
+
+	<div class="page-heading header-text">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<h1>Pozvánky na akce a novinky</h1>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="services">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 mb-3">
+					<h2>{ n.Title }</h2>
+				</div>
+				<div class="col-md-12 mb-4">
+					<p>{ n.Text }</p>
+				</div>
+				<div class="col-md-12">
+					<div class="gallery-strip">
+						for _, photo := range n.Photos {
+							<a href={ templ.SafeURL(photo.Src) } class="glightbox" data-gallery="novinka" data-description={ photo.Alt }>
+								<img src={ photo.Src } alt={ photo.Alt }/>
+							</a>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+	<script>GLightbox({ selector: ".glightbox" });</script>
+}

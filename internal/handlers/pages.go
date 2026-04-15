@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/mastastny/slavoj-web-2025/internal/models/reservation"
 	"github.com/mastastny/slavoj-web-2025/internal/views"
+	emailviews "github.com/mastastny/slavoj-web-2025/internal/views/email"
 )
 
 func GetHome(c echo.Context) error {
@@ -72,6 +74,18 @@ func GetNovinka1(c echo.Context) error {
 		return renderHTML(c, views.Novinka(novinka1))
 	}
 	return renderHTML(c, views.Layout(novinka1.Title+" | TJ Slavoj Loštice", views.Novinka(novinka1)))
+}
+
+func GetEmailPreview(c echo.Context) error {
+	mock := reservation.Service{
+		Name:        "Jan Novák",
+		Email:       "jan.novak@example.com",
+		Start:       "2026-05-10T10:00:00Z",
+		End:         "2026-05-10T12:00:00Z",
+		PlayerCount: 4,
+		Notes:       "Prosím o zapůjčení raket.",
+	}
+	return renderHTML(c, emailviews.ReservationConfirmation(mock, "tenisový kurt č. 1 (antuka)", "4729", "https://slavojlostice.cz/reservation/cancel/abc123"))
 }
 
 func GetHomeContent(c echo.Context) error {

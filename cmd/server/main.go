@@ -71,6 +71,7 @@ func main() {
 	e.GET("/documents", handlers.GetDocuments)
 	e.GET("/home", handlers.GetHomeContent)
 	e.GET("/novinky/1", handlers.GetNovinka1)
+	e.GET("/email", handlers.GetEmailPreview)
 
 	e.GET("/api/events", server.GetEvents)
 

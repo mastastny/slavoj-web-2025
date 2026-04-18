@@ -130,9 +130,9 @@ templ ReservationHead() {
          var sel = window.currentSelection;
          if (e.key === 'ArrowDown') {
            var newEnd = new Date(sel.end.getTime() + slot);
-           // Nepřekračuj slotMaxTime (22:00)
+           // Nepřekračuj slotMaxTime (22:00) — setUTCHours kvůli FullCalendar fake-UTC reprezentaci
            var maxTime = new Date(sel.end);
-           maxTime.setHours(22, 0, 0, 0);
+           maxTime.setUTCHours(22, 0, 0, 0);
            if (newEnd > maxTime) return;
            window.calendar.select(sel.start, newEnd);
          } else {

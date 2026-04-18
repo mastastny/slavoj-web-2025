@@ -51,14 +51,14 @@ func ReservationConfirmation(r reservation.Service, courtName string, lockCode s
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"cs\"><head><meta charset=\"UTF-8\"></head><body style=\"font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f4f4f4; padding: 32px 0;\"><tr><td align=\"center\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff; border-radius:8px; overflow:hidden;\"><!-- Header --><tr><td style=\"background:#ec543d; padding: 20px 32px;\"><table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr><td style=\"width:1px; padding-right:20px; vertical-align:middle;\"><a href=\"https://www.mu-lostice.cz\" target=\"_blank\" style=\"display:block;\"><img src=\"/images/sponsors/logo_lostice.jpg\" alt=\"Město Loštice\" style=\"height:52px; width:auto; display:block;\"></a></td><td style=\"width:1px; padding-right:20px; vertical-align:middle;\"><div style=\"width:1px; height:40px; background:rgba(255,255,255,0.45);\"></div></td><td style=\"vertical-align:middle;\"><h1 style=\"color:#ffffff; margin:0; font-size:22px;\">TJ Slavoj Loštice</h1><p style=\"color:#fde8e4; margin:6px 0 0;\">Potvrzení rezervace</p></td></tr></table></td></tr><!-- Body --><tr><td style=\"padding: 32px;\"><p style=\"margin: 0 0 16px;\">Dobrý den, <strong>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"cs\"><head><meta charset=\"UTF-8\"></head><body style=\"font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f4f4f4; padding: 32px 0;\"><tr><td align=\"center\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff; border-radius:8px; overflow:hidden;\"><!-- Header --><tr><td style=\"background:#ec543d; padding: 20px 32px;\"><table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr><td style=\"width:1px; padding-right:20px; vertical-align:middle;\"><a href=\"https://www.mu-lostice.cz\" target=\"_blank\" style=\"display:block;\"><!--                      <img src=\"/images/sponsors/logo_lostice.jpg\" alt=\"Město Loštice\" style=\"height:52px; width:auto; display:block;\"/>--><img src=\"/images/logos/logo_barevné_horizontalni_pruhledne.png\" alt=\"Město Loštice\" style=\"height:52px; width:auto; display:block;\"></a></td><td style=\"width:1px; padding-right:20px; vertical-align:middle;\"><div style=\"width:1px; height:40px; background:rgba(255,255,255,0.45);\"></div></td><td style=\"vertical-align:middle;\"><h1 style=\"color:#000000; margin:0; font-size:22px;\">TJ Slavoj Loštice</h1><p style=\"color:#333333; margin:6px 0 0;\">Potvrzení rezervace</p></td></tr></table></td></tr><!-- Body --><tr><td style=\"padding: 32px;\"><p style=\"margin: 0 0 16px;\">Dobrý den, <strong>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(r.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 60, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 61, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -71,7 +71,7 @@ func ReservationConfirmation(r reservation.Service, courtName string, lockCode s
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmtDate(r.Start))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 70, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 71, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -84,7 +84,7 @@ func ReservationConfirmation(r reservation.Service, courtName string, lockCode s
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmtTime(r.Start))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 74, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 75, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -97,7 +97,7 @@ func ReservationConfirmation(r reservation.Service, courtName string, lockCode s
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmtTime(r.End))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 78, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 79, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -110,7 +110,7 @@ func ReservationConfirmation(r reservation.Service, courtName string, lockCode s
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(courtName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 82, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 83, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -123,7 +123,7 @@ func ReservationConfirmation(r reservation.Service, courtName string, lockCode s
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", r.PlayerCount))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 86, Col: 88}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 87, Col: 88}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -141,7 +141,7 @@ func ReservationConfirmation(r reservation.Service, courtName string, lockCode s
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(r.Notes)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 91, Col: 63}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 92, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -159,7 +159,7 @@ func ReservationConfirmation(r reservation.Service, courtName string, lockCode s
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(lockCode)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 104, Col: 105}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 105, Col: 105}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -172,7 +172,7 @@ func ReservationConfirmation(r reservation.Service, courtName string, lockCode s
 		var templ_7745c5c3_Var10 templ.SafeURL
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(cancelLink))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 112, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 113, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -185,7 +185,7 @@ func ReservationConfirmation(r reservation.Service, courtName string, lockCode s
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(cancelLink)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 112, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 113, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {

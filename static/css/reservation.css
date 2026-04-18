@@ -24,10 +24,33 @@
     border: none;
     padding: 0;
     margin: 0;
-    background: rgba(0, 0, 255, 0.35);;         /* default průhledné */
+    background: rgba(0, 0, 255, 0.35);
     cursor: pointer;
     pointer-events: auto;
-    font-size: 2rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* container-type: size → cqw/cqh uvnitř jsou relativní k rozměrům TÉTO zóny */
+    container-type: size;
+}
+
+/* Text v zóně — škáluje se s fyzickými rozměry zóny */
+.zone span {
+    display: block;
+    width: 100%;
+    text-align: center;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.2;
+    /*
+     * min(30cqh, 15cqw):
+     *   30cqh = výška zóny / ~3 linky  →  pojistka na výšku
+     *   15cqw = šířka zóny / ~6 znaků  →  pojistka na šířku
+     * clamp: minimum 6px, maximum 20px
+     */
+    font-size: clamp(6px, min(30cqh, 15cqw), 20px);
 }
 
 /* Hover/focus efekt */

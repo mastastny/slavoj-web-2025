@@ -168,9 +168,9 @@ templ Reservation(courts []models.Court) {
           <div class="areal mx-auto">
             <img src="/images/areal.png" alt="Sportoviště" class="areal_img">
             <div class="areal_overlay">
-                <button class="zone zone--rect hriste-1 zone--active" data-court="2" aria-label="Hřiště 1" hx-on:click="selectCourt(2)">tenisový kurt 1</button>
-                <button class="zone zone--rect hriste-2" data-court="3" aria-label="Hřiště 2" hx-on:click="selectCourt(3)">tenisový kurt 2</button>
-                <button class="zone zone--poly hriste-3" data-court="6" aria-label="Hřiště 3" hx-on:click="selectCourt(6)">travnaté hřiště</button>
+                <button class="zone zone--rect hriste-1 zone--active" data-court="2" aria-label="Hřiště 1" hx-on:click="selectCourt(2)"><span>tenisový kurt 1</span></button>
+                <button class="zone zone--rect hriste-2" data-court="3" aria-label="Hřiště 2" hx-on:click="selectCourt(3)"><span>tenisový kurt 2</span></button>
+                <button class="zone zone--poly hriste-3" data-court="6" aria-label="Hřiště 3" hx-on:click="selectCourt(6)"><span>travnaté hřiště</span></button>
                 <!--              for i, court := range courts {-->
 <!--                <button-->
 <!--                  class={ "zone", templ.KV("zone&#45;&#45;rect", i < 2), templ.KV("zone&#45;&#45;poly", i >= 2), templ.KV("zone&#45;&#45;active", i == 0), "hriste-" + fmt.Sprint(court.ID) }-->

@@ -192,3 +192,33 @@
 .areal {
     display: inline-block;
 }
+
+/* ── Mobile: stack sidebar above calendar ─────────────── */
+@media (max-width: 767px) {
+    .res-body {
+        flex-direction: column;
+    }
+    .res-sidebar {
+        flex: 0 0 auto;
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    /* FullCalendar toolbar: wrap + smaller buttons */
+    .fc .fc-toolbar {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+    .fc .fc-toolbar-chunk {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+    .fc .fc-button {
+        padding: 0.2rem 0.45rem;
+        font-size: 0.78rem;
+    }
+    .fc .fc-toolbar-title {
+        font-size: 1rem;
+    }
+}

@@ -60,7 +60,7 @@ templ ReservationHead() {
      const el = document.getElementById('calendar');
      if (!el || el.dataset.initialized) return; // už inicializovaný nebo není na stránce
      window.calendar = new FullCalendar.Calendar(el, {
-       initialView: 'timeGridWeek',
+       initialView: window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek',
        locale: 'cs',
       firstDay: 1,
        timeZone: 'Europe/Prague',
@@ -68,6 +68,9 @@ templ ReservationHead() {
        slotMaxTime: '22:00:00',
        slotDuration: '00:30:00',
        selectable: true,
+       selectLongPressDelay: 0,
+       unselectAuto: false,
+       selectMirror: true,
        contentHeight: 'auto',
        allDayText: 'celý den',
        buttonText: {
@@ -84,6 +87,13 @@ templ ReservationHead() {
        ],
       selectAllow: function(info) {
         return info.start >= new Date();
+      },
+      dateClick: function(info) {
+        // Tap na mobilu (bez dragu) — vyber 1 hodinu od tapnutého slotu
+        var start = info.date;
+        if (start < new Date()) return; // minulý slot — ignoruj
+        var end = new Date(start.getTime() + 60 * 60 * 1000);
+        window.calendar.select(start, end); // spustí select callback níže
       },
       select: function(info) {
         window.currentSelection = { start: info.start, end: info.end };
@@ -108,6 +118,50 @@ templ ReservationHead() {
 
      window.calendar.render();
      el.dataset.initialized = "true"; // označ element, aby se znovu nespustil
+
+     // Ctrl+↓ — prodlouž výběr o 1 slot (30 min)
+     if (!window._calKeyAttached) {
+       window._calKeyAttached = true;
+       document.addEventListener('keydown', function(e) {
+         if (!e.ctrlKey || (e.key !== 'ArrowDown' && e.key !== 'ArrowUp')) return;
+         if (!window.currentSelection || !window.calendar) return;
+         e.preventDefault();
+         var slot = 30 * 60 * 1000;
+         var sel = window.currentSelection;
+         if (e.key === 'ArrowDown') {
+           var newEnd = new Date(sel.end.getTime() + slot);
+           // Nepřekračuj slotMaxTime (22:00)
+           var maxTime = new Date(sel.end);
+           maxTime.setHours(22, 0, 0, 0);
+           if (newEnd > maxTime) return;
+           window.calendar.select(sel.start, newEnd);
+         } else {
+           var newEnd = new Date(sel.end.getTime() - slot);
+           // Minimálně 1 slot (30 min)
+           if (newEnd <= sel.start) return;
+           window.calendar.select(sel.start, newEnd);
+         }
+       });
+     }
+
+     // Reaguj na změnu velikosti okna / zoom
+     if (!window._calResizeAttached) {
+       window._calResizeAttached = true;
+       window.addEventListener('resize', function() {
+         clearTimeout(window._calResizeTimer);
+         window._calResizeTimer = setTimeout(function() {
+           if (!window.calendar) return;
+           // Přepočítá souřadnice buněk (opravuje touch po zoomu)
+           window.calendar.updateSize();
+           // Přepni view podle aktuální šířky
+           var isMobile = window.innerWidth < 768;
+           var target = isMobile ? 'timeGridDay' : 'timeGridWeek';
+           if (window.calendar.view.type !== target) {
+             window.calendar.changeView(target);
+           }
+         }, 200);
+       });
+     }
    }
 
    // inicializace při prvním načtení

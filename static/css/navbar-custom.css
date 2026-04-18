@@ -1,0 +1,39 @@
+/* ── Navbar — vlastní úpravy (nepřepisovat vendor soubory) ── */
+
+/* Zajistit plnou šířku headeru (position: absolute ve vendor CSS jinak
+   způsobuje smrsknutí na šířku obsahu) */
+header {
+    width: 100%;
+}
+
+/* Hamburger tlačítko: průhledné pozadí + bílá ikona (výchozí stav) */
+.navbar .navbar-toggler {
+    border-color: transparent;
+    background-color: transparent;
+}
+.navbar .navbar-toggler-icon:after {
+    color: #fff;
+}
+
+/* Po scrollu (třída .background-header): ikona oranžová — stejně jako název */
+.background-header .navbar .navbar-toggler-icon:after {
+    color: #ec543d;
+}
+
+/* Zabránění překryvu názvu s hamburgerem na malých obrazovkách */
+@media (max-width: 992px) {
+    /* Oba prvky jsou position:absolute → navbar kolabuje na výšku paddingu.
+       min-height zajistí, že šedý pruh překryje celý navbar včetně tlačítka. */
+    header .navbar {
+        min-height: 76px;
+    }
+    .navbar .navbar-brand {
+        max-width: calc(100% - 90px); /* místo pro toggler vpravo */
+    }
+    .navbar .navbar-brand h2 {
+        font-size: 18px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}

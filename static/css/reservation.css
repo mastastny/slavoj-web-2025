@@ -76,44 +76,102 @@
 /* Použij % pro responsivitu vůči velikosti obrázku */
 
 /* Hřiště 1 – obdélník (pozice a velikost) */
-.hriste-1 {
-    top: 6%;        /* posuň dle reality */
-    left: 47%;
-    width: 24%;
-    height: 18%;
+.area-tenis-left {
+    top: 4.5%;        /* posuň dle reality */
+    left: 47.5%;
+    width: 25%;
+    height: 20%;
     /* volitelně: jemné zvýraznění obrysu i bez hoveru */
     /* box-shadow: inset 0 0 0 2px rgba(255,0,0,.25); */
 }
 
 /* Hřiště 1 – obdélník (pozice a velikost) */
-.hriste-2 {
-    top: 6%;        /* posuň dle reality */
-    left: 73%;
-    width: 24%;
-    height: 18%;
+.area-tenis-right {
+    top: 4.5%;        /* posuň dle reality */
+    left: 73.5%;
+    width: 25%;
+    height: 20%;
     /* volitelně: jemné zvýraznění obrysu i bez hoveru */
     /* box-shadow: inset 0 0 0 2px rgba(255,0,0,.25); */
 }
 
 /* Hřiště 2 – polygon pomocí clip-path */
-.hriste-3 {
-    top: 37%;
-    left: 36%;
-    width: 57.5%;
-    height: 38%;
+.area-grass {
+    top: 37.5%;
+    left: 42%;
+    width: 40.5%;
+    height: 35%;
     /* Nepravidelný tvar v rámci svého boxu (0–100% v šířce/výšce zóny) */
     /*-webkit-clip-path: polygon(30% 10%, 40% 5%, 95% 12%, 90% 85%, 12% 90%);*/
     /*clip-path: polygon(10% 10%, 40% 5%, 95% 12%, 90% 85%, 12% 90%);*/
     border-top-left-radius: 20% 50%;
     border-bottom-left-radius: 20% 50%;
-    border-top-right-radius: 20% 50%;
-    border-bottom-right-radius: 20% 50%;
+    border-top-right-radius: 0% 0%;
+    border-bottom-right-radius: 20% 0%;
 }
 
+
+.area-volleyball {
+    top: 9%;        /* posuň dle reality */
+    left: 19%;
+    width: 17.5%;
+    height: 22%;
+    /* volitelně: jemné zvýraznění obrysu i bez hoveru */
+    /* box-shadow: inset 0 0 0 2px rgba(255,0,0,.25); */
+}
+
+.area-multifunctional {
+    top: 62%;        /* posuň dle reality */
+    left: 2%;
+    width: 30%;
+    height: 25%;
+    /* volitelně: jemné zvýraznění obrysu i bez hoveru */
+    /* box-shadow: inset 0 0 0 2px rgba(255,0,0,.25); */
+}
+
+.area-grass { z-index: 2; }
+
+.area-tartan {
+    z-index: 1;
+    top: 33%;
+    left: 39.2%;
+    width: 56.2%;
+    height: 44%;
+    background: transparent;
+    border: 28px solid rgba(0, 0, 255, 0.5);
+    border-top-left-radius: 20% 50%;
+    border-bottom-left-radius: 20% 50%;
+    border-top-right-radius: 20% 50%;
+    border-bottom-right-radius: 20% 50%;
+    overflow: visible;
+}
+.area-tartan span {
+    position: absolute;
+    top: -26px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.area-tartan:hover,
+.area-tartan:focus-visible {
+    background: transparent;
+    border-color: rgba(0, 0, 255, 0.7);
+}
+.area-tartan.zone--active {
+    background: transparent;
+    border-color: rgba(236, 84, 61, 0.6);
+}
+.area-tartan.zone--active:hover,
+.area-tartan.zone--active:focus-visible {
+    background: transparent;
+    border-color: rgba(236, 84, 61, 0.8);
+}
+
+
+
 /* Pokud chceš mít polygon "viditelný" i v klidu, přidej slabý overlay */
-.hriste-3 { background: rgba(0, 0, 255, 0.35); }
-.hriste-3:hover,
-.hriste-3:focus-visible { background: rgba(0,0,255,0.35); }
+.area-grass { background: rgba(0, 0, 255, 0.35); }
+.area-grass:hover,
+.area-grass:focus-visible { background: rgba(0,0,255,0.35); }
 
 /* Oranžový highlight pro uživatelský výběr v kalendáři */
 .fc-highlight {

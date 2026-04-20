@@ -220,11 +220,16 @@ templ Reservation(courts []models.Court) {
       <div class="row">
         <div class="col-md-12 text-center py-3 border-bottom">
           <div class="areal mx-auto">
-            <img src="/images/areal.png" alt="Sportoviště" class="areal_img">
+            <img src="/images/areal/areal_top_2_reduced.JPG" alt="Sportoviště" class="areal_img">
             <div class="areal_overlay">
-                <button class="zone zone--rect hriste-1 zone--active" data-court="2" aria-label="Hřiště 1" hx-on:click="selectCourt(2)"><span>tenisový kurt 1</span></button>
-                <button class="zone zone--rect hriste-2" data-court="3" aria-label="Hřiště 2" hx-on:click="selectCourt(3)"><span>tenisový kurt 2</span></button>
-                <button class="zone zone--poly hriste-3" data-court="6" aria-label="Hřiště 3" hx-on:click="selectCourt(6)"><span>travnaté hřiště</span></button>
+
+
+                <button class="zone zone--rect area-tenis-left" data-court="2" hx-on:click="selectCourt(2)"><span>tenisový kurt 1</span></button>
+                <button class="zone zone--rect area-tenis-right" data-court="3" hx-on:click="selectCourt(3)"><span>tenisový kurt 2</span></button>
+                <button class="zone zone--poly area-grass" data-court="6" hx-on:click="selectCourt(6)"><span>travnaté hřiště</span></button>
+                <button class="zone zone--rect area-volleyball" data-court="4" hx-on:click="selectCourt(4)"><span>volejbalové hřiště</span></button>
+                <button class="zone zone--rect area-multifunctional zone--active" data-court="1" hx-on:click="selectCourt(1)"><span>multifunkční hřiště</span></button>
+                <button class="zone zone--rect area-tartan" data-court="5" hx-on:click="selectCourt(5)"><span>tartanová dráha</span></button>
                 <!--              for i, court := range courts {-->
 <!--                <button-->
 <!--                  class={ "zone", templ.KV("zone&#45;&#45;rect", i < 2), templ.KV("zone&#45;&#45;poly", i >= 2), templ.KV("zone&#45;&#45;active", i == 0), "hriste-" + fmt.Sprint(court.ID) }-->

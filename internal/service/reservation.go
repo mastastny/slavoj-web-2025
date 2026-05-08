@@ -48,13 +48,29 @@ func (ns *Reservation) Create(newReservation reservation.Service) error {
 		return err
 	}
 
-	start, err := time.Parse(time.RFC3339Nano, newReservation.Start)
+	tz, err := time.LoadLocation("Europe/Prague")
+	if err != nil {
+		return fmt.Errorf("service.Reservation-Create - cannot load timezone: %w", err)
+	}
+
+	parsedStart, err := time.Parse(time.RFC3339Nano, newReservation.Start)
 	if err != nil {
 		return fmt.Errorf("service.Reservation-Create - invalid start time: %w", err)
 	}
+	// FullCalendar sends fake-UTC times where UTC components = Prague local time
+	start := time.Date(parsedStart.Year(), parsedStart.Month(), parsedStart.Day(),
+		parsedStart.Hour(), parsedStart.Minute(), parsedStart.Second(), parsedStart.Nanosecond(), tz)
+
 	if start.Before(time.Now()) {
 		return apperrors.ErrEventInThePast
 	}
+
+	parsedEnd, err := time.Parse(time.RFC3339Nano, newReservation.End)
+	if err != nil {
+		return fmt.Errorf("service.Reservation-Create - invalid end time: %w", err)
+	}
+	end := time.Date(parsedEnd.Year(), parsedEnd.Month(), parsedEnd.Day(),
+		parsedEnd.Hour(), parsedEnd.Minute(), parsedEnd.Second(), parsedEnd.Nanosecond(), tz)
 
 	eventId, err := ns.eventRepository.CreateEvent(newReservation)
 	if err != nil {
@@ -68,11 +84,13 @@ func (ns *Reservation) Create(newReservation reservation.Service) error {
 		return fmt.Errorf("service.Reservation-Create - unable to get area name %w", err)
 	}
 
-	lockerCode := ns.locker.GetLockerCode(start)
+	//lockerCode := ns.locker.GetLockerCode(start)
+	lockerCode := ns.locker.CreatePasscode(start, end)
+
 	cancelLink := ns.publicDomain + "/reservation/cancel/" + ns.linkCoder.Encode(eventId)
 
 	if err := ns.emailService.SendConfirmation(newReservation, area.Name, lockerCode, cancelLink); err != nil {
-		return fmt.Errorf("service.Reservation-Create - unable to send confirmation: %w", err)
+		return fmt.Errorf("service.Reservation-Create - unable to sendPasscodeToLock confirmation: %w", err)
 	}
 
 	return nil

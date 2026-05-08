@@ -14,13 +14,25 @@ type Config struct {
 	PublicDomain  string `env:"PUBLIC_DOMAIN" envDefault:"http://localhost"`
 	Secure        bool   `env:"SERVER_SECURE" envDefault:"true"`
 	LinkSecretKey string `env:"LINK_SECRET_KEY" envRequired:"true"`
+	LogDebug      bool   `env:"LOG_DEBUG" envDefault:"false"`
 	Postgres      Postgres
 	Supabase      Supabase
 	Auth          Auth
-	Firebase      Firebase
 	SendGrid      SendGrid
 	Resend        Resend
 	Areal         Areal
+	LockerService LockerService
+}
+
+type LockerService struct {
+	LockId        string `env:"LOCKER_LOCK_ID" envRequired:"true"`
+	ClientId      string `env:"LOCKER_CLIENT_ID" envRequired:"true"`
+	RefreshToken  string `env:"LOCKER_REFRESH_TOKEN" envRequired:"true"`
+	ClientSecret  string `env:"LOCKER_CLIENT_SECRET" envRequired:"true"`
+	TokenLifespan   int    `env:"LOCKER_TOKEN_LIFESPAN" envRequired:"true"`   // days
+	RefreshWindow   int    `env:"LOCKER_REFRESH_WINDOW" envRequired:"true"`   // days
+	AccessToken   string `env:"LOCKER_ACCESS_TOKEN"`
+	BackupCode    string `env:"LOCKER_BACKUP_CODE"`
 }
 
 type Areal struct {
@@ -37,13 +49,6 @@ type Postgres struct {
 	User     string `env:"POSTGRES_USER" envDefault:"user"`
 	Password string `env:"POSTGRES_PASSWORD" envDefault:"user"`
 	Db       string `env:"POSTGRES_DB" envDefault:"snpb"`
-}
-
-type Firebase struct {
-	ServiceAccountJSONPath string `env:"FIREBASE_SERVICE_ACCOUNT_JSON_PATH"`
-	ServiceAccountJSON     string `env:"FIREBASE_SERVICE_ACCOUNT_JSON"`
-	DatabaseID             string `env:"FIREBASE_DATABASE_ID" envDefault:"(default)"`
-	ProjectID              string `env:"FIREBASE_PROJECT_ID" envRequired:"true"`
 }
 
 type SendGrid struct {
@@ -66,7 +71,10 @@ type Auth struct {
 	RefreshTokenRotationThreshold int    `env:"REFRESH_TOKEN_ROTATION_THRESHOLD" envDefault:"5"` // days before expiration
 }
 
+// recalculate all values, so everything in program is in seconds
 func (c *Config) recalculate() {
+	c.LockerService.TokenLifespan = c.LockerService.TokenLifespan * 60 * 60 * 24
+
 	c.Auth.JwtLifespan = c.Auth.JwtLifespan * 60
 	c.Auth.RefreshTokenLifespan = c.Auth.RefreshTokenLifespan * 60 * 60 * 24
 	c.Auth.RefreshTokenRotationThreshold = c.Auth.RefreshTokenRotationThreshold * 60 * 60 * 24

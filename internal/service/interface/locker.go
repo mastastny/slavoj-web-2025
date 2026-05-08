@@ -4,4 +4,5 @@ import "time"
 
 type Locker interface {
 	GetLockerCode(targetTime time.Time) string
+	CreatePasscode(startTime time.Time, endTime time.Time) string
 }

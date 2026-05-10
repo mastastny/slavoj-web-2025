@@ -165,7 +165,7 @@ func ReservationConfirmation(r reservation.Service, courtName string, lockCode s
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</table></td></tr></table><!-- Lock code --><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#fff8e1; border-left:4px solid #ec543d; border-radius:4px; margin-bottom:24px;\"><tr><td style=\"padding:16px;\"><p style=\"margin:0 0 4px; font-size:13px; color:#666;\">Kód pro otevření skříňky s klíčem od skladu je:</p><p style=\"margin:0; font-size:24px; font-weight:bold; letter-spacing:4px;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</table></td></tr></table><!-- Lock code --><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#fff8e1; border-left:4px solid #ec543d; border-radius:4px; margin-bottom:24px;\"><tr><td style=\"padding:16px;\"><p style=\"margin:0 0 4px; font-size:13px; color:#666;\">Kód pro otevření skladu s nářadím (sloupky, sítě, branky atd.)</p><p style=\"margin:0; font-size:24px; font-weight:bold; letter-spacing:4px;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -2,10 +2,9 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log/slog"
-
-	//"log/slog"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -21,9 +20,16 @@ import (
 )
 
 var echoLambda *echoadapter.EchoLambdaV2
+var lockerSvc *service.LockerService
 
 func main() {
 	conf := config.NewConfig()
+
+	logLevel := slog.LevelInfo
+	if conf.LogDebug {
+		logLevel = slog.LevelDebug
+	}
+	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: logLevel})))
 
 	courts := []models.Court{
 		{ID: 1, Name: "multifunkční hřiště"},
@@ -51,7 +57,8 @@ func main() {
 
 	//eventRepository = repository.NewSqliteEventRepository(courts)
 
-	lockerService := service.NewLockerService(conf)
+	lockerSvc = service.NewLockerService(conf)
+	lockerService := lockerSvc
 	linkCoder := service.NewLinkCoder(conf)
 	emailService := resendEmail.NewEmail(conf)
 	reservationService := service.ConstructReservation(eventRepository, emailService, lockerService, linkCoder, conf.PublicDomain)
@@ -72,6 +79,13 @@ func main() {
 	e.GET("/home", handlers.GetHomeContent)
 	e.GET("/novinky/1", handlers.GetNovinka1)
 	e.GET("/email", handlers.GetEmailPreview)
+	e.GET("/filter", func(c echo.Context) error {
+		err := lockerService.FilterExpiredPasscodesFromLock()
+		if err != nil {
+			return c.String(500, err.Error())
+		}
+		return c.String(200, "ok")
+	})
 
 	e.GET("/api/events", server.GetEvents)
 
@@ -87,6 +101,24 @@ func main() {
 	}
 }
 
-func handler(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
+type schedulerEvent struct {
+	Source string `json:"source"`
+}
+
+func handler(ctx context.Context, raw json.RawMessage) (any, error) {
+	var evt schedulerEvent
+	if err := json.Unmarshal(raw, &evt); err == nil && evt.Source == "aws.scheduler" {
+		slog.Info("EventBridge scheduler trigger received, running filter")
+		err = lockerSvc.FilterExpiredPasscodesFromLock()
+		if err != nil {
+			slog.Warn("filter failed", "err", err)
+		}
+		return nil, err
+	}
+
+	var req events.APIGatewayV2HTTPRequest
+	if err := json.Unmarshal(raw, &req); err != nil {
+		return nil, fmt.Errorf("unknown event type: %w", err)
+	}
 	return echoLambda.ProxyWithContext(ctx, req)
 }

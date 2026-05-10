@@ -30,7 +30,7 @@ func fmtTime(iso string) string {
 	return t.UTC().Format("15:04")
 }
 
-func ReservationConfirmation(r reservation.Service, courtName string, lockCode string, cancelLink string) templ.Component {
+func ReservationConfirmation(r reservation.Service, courtName string, lockCode string, cancelLink string, domain string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -51,147 +51,160 @@ func ReservationConfirmation(r reservation.Service, courtName string, lockCode s
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"cs\"><head><meta charset=\"UTF-8\"></head><body style=\"font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f4f4f4; padding: 32px 0;\"><tr><td align=\"center\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff; border-radius:8px; overflow:hidden;\"><!-- Header --><tr><td style=\"background:#ec543d; padding: 20px 32px;\"><table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr><td style=\"width:1px; padding-right:20px; vertical-align:middle;\"><a href=\"https://www.mu-lostice.cz\" target=\"_blank\" style=\"display:block;\"><!--                      <img src=\"/images/sponsors/logo_lostice.jpg\" alt=\"Město Loštice\" style=\"height:52px; width:auto; display:block;\"/>--><img src=\"/images/logos/logo_barevné_horizontalni_pruhledne.png\" alt=\"Město Loštice\" style=\"height:52px; width:auto; display:block;\"></a></td><td style=\"width:1px; padding-right:20px; vertical-align:middle;\"><div style=\"width:1px; height:40px; background:rgba(255,255,255,0.45);\"></div></td><td style=\"vertical-align:middle;\"><h1 style=\"color:#000000; margin:0; font-size:22px;\">TJ Slavoj Loštice</h1><p style=\"color:#333333; margin:6px 0 0;\">Potvrzení rezervace</p></td></tr></table></td></tr><!-- Body --><tr><td style=\"padding: 32px;\"><p style=\"margin: 0 0 16px;\">Dobrý den, <strong>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"cs\"><head><meta charset=\"UTF-8\"></head><body style=\"font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f4f4f4; padding: 32px 0;\"><tr><td align=\"center\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff; border-radius:8px; overflow:hidden;\"><!-- Header --><tr><td style=\"background:#ec543d; padding: 20px 32px;\"><table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr><td style=\"width:1px; padding-right:20px; vertical-align:middle;\"><a href=\"https://www.mu-lostice.cz\" target=\"_blank\" style=\"display:block;\"><!--                      <img src=\"/images/sponsors/logo_lostice.jpg\" alt=\"Město Loštice\" style=\"height:52px; width:auto; display:block;\"/>--><img src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(r.Name)
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(domain + "/images/logos/logo_barevné_horizontalni_pruhledne.png")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 61, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 43, Col: 100}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</strong>,</p><p style=\"margin: 0 0 24px;\">vaše rezervace byla úspěšně přijata. Níže najdete shrnutí.</p><!-- Summary box --><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f8f8f8; border-radius:6px; margin-bottom:24px;\"><tr><td style=\"padding:20px;\"><table width=\"100%\" cellpadding=\"6\" cellspacing=\"0\"><tr><td style=\"color:#666; font-size:13px; width:140px;\">Datum</td><td style=\"font-weight:bold;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" alt=\"Město Loštice\" style=\"height:52px; width:auto; display:block;\"></a></td><td style=\"width:1px; padding-right:20px; vertical-align:middle;\"><div style=\"width:1px; height:40px; background:rgba(255,255,255,0.45);\"></div></td><td style=\"vertical-align:middle;\"><h1 style=\"color:#000000; margin:0; font-size:22px;\">TJ Slavoj Loštice</h1><p style=\"color:#333333; margin:6px 0 0;\">Potvrzení rezervace</p></td></tr></table></td></tr><!-- Body --><tr><td style=\"padding: 32px;\"><p style=\"margin: 0 0 16px;\">Dobrý den, <strong>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmtDate(r.Start))
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(r.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 71, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 61, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</td></tr><tr><td style=\"color:#666; font-size:13px;\">Od</td><td style=\"font-weight:bold;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</strong>,</p><p style=\"margin: 0 0 24px;\">vaše rezervace byla úspěšně přijata. Níže najdete shrnutí.</p><!-- Summary box --><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f8f8f8; border-radius:6px; margin-bottom:24px;\"><tr><td style=\"padding:20px;\"><table width=\"100%\" cellpadding=\"6\" cellspacing=\"0\"><tr><td style=\"color:#666; font-size:13px; width:140px;\">Datum</td><td style=\"font-weight:bold;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmtTime(r.Start))
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmtDate(r.Start))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 75, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 71, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</td></tr><tr><td style=\"color:#666; font-size:13px;\">Do</td><td style=\"font-weight:bold;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</td></tr><tr><td style=\"color:#666; font-size:13px;\">Od</td><td style=\"font-weight:bold;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmtTime(r.End))
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmtTime(r.Start))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 79, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 75, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</td></tr><tr><td style=\"color:#666; font-size:13px;\">Hřiště</td><td style=\"font-weight:bold;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</td></tr><tr><td style=\"color:#666; font-size:13px;\">Do</td><td style=\"font-weight:bold;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(courtName)
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmtTime(r.End))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 83, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 79, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</td></tr><tr><td style=\"color:#666; font-size:13px;\">Počet hráčů</td><td style=\"font-weight:bold;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</td></tr><tr><td style=\"color:#666; font-size:13px;\">Hřiště</td><td style=\"font-weight:bold;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", r.PlayerCount))
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(courtName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 87, Col: 88}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 83, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</td></tr>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</td></tr><tr><td style=\"color:#666; font-size:13px;\">Počet hráčů</td><td style=\"font-weight:bold;\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", r.PlayerCount))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 87, Col: 88}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</td></tr>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if r.Notes != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<tr><td style=\"color:#666; font-size:13px;\">Poznámka</td><td style=\"font-weight:bold;\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<tr><td style=\"color:#666; font-size:13px;\">Poznámka</td><td style=\"font-weight:bold;\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(r.Notes)
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(r.Notes)
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 92, Col: 63}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</td></tr>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</table></td></tr></table><!-- Lock code --><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#fff8e1; border-left:4px solid #ec543d; border-radius:4px; margin-bottom:24px;\"><tr><td style=\"padding:16px;\"><p style=\"margin:0 0 4px; font-size:13px; color:#666;\">Kód pro otevření skříňky s klíčem od skladu je:</p><p style=\"margin:0; font-size:24px; font-weight:bold; letter-spacing:4px;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</table></td></tr></table><!-- Lock code --><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#fff8e1; border-left:4px solid #ec543d; border-radius:4px; margin-bottom:24px;\"><tr><td style=\"padding:16px;\"><p style=\"margin:0 0 4px; font-size:13px; color:#666;\">Kód pro otevření skříňky s klíčem od skladu je:</p><p style=\"margin:0; font-size:24px; font-weight:bold; letter-spacing:4px;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var9 string
-		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(lockCode)
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(lockCode)
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 105, Col: 105}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</p></td></tr></table><!-- Cancel link --><p style=\"margin: 0 0 24px; color:#555; font-size:14px;\">Pro zrušení rezervace klikněte na následující odkaz:<br><a href=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var10 templ.SafeURL
-		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(cancelLink))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 113, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" style=\"color:#ec543d;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</p></td></tr></table><!-- Cancel link --><p style=\"margin: 0 0 24px; color:#555; font-size:14px;\">Pro zrušení rezervace klikněte na následující odkaz:<br><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var11 string
-		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(cancelLink)
+		var templ_7745c5c3_Var11 templ.SafeURL
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(cancelLink))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 113, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 113, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</a></p><p style=\"margin: 0; color:#555; font-size:14px;\">V případě dotazů nás kontaktujte na <a href=\"mailto:info@slavojlostice.cz\" style=\"color:#ec543d;\">info@slavojlostice.cz</a>.</p></td></tr><!-- Footer --><tr><td style=\"background:#f0f0f0; padding:16px 32px; font-size:12px; color:#999; text-align:center;\">TJ Slavoj Loštice &mdash; slavojlostice.cz</td></tr></table></td></tr></table></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" style=\"color:#ec543d;\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var12 string
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(cancelLink)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/email/reservation_confirmation.templ`, Line: 113, Col: 89}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</a></p><p style=\"margin: 0; color:#555; font-size:14px;\">V případě dotazů nás kontaktujte na <a href=\"mailto:info@slavojlostice.cz\" style=\"color:#ec543d;\">info@slavojlostice.cz</a>.</p></td></tr><!-- Footer --><tr><td style=\"background:#f0f0f0; padding:16px 32px; font-size:12px; color:#999; text-align:center;\">TJ Slavoj Loštice &mdash; slavojlostice.cz</td></tr></table></td></tr></table></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

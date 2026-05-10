@@ -14,16 +14,17 @@ import (
 
 type Email struct {
 	client *resend.Client
+	domain string
 }
 
 func NewEmail(conf config.Config) *Email {
 	client := resend.NewClient(conf.Resend.APIKey)
-	return &Email{client: client}
+	return &Email{client: client, domain: conf.PublicDomain}
 }
 
 func (e *Email) SendConfirmation(r reservation.Service, courtName string, lockCode string, cancelLink string) error {
 	var buf bytes.Buffer
-	if err := emailviews.ReservationConfirmation(r, courtName, lockCode, cancelLink).Render(context.Background(), &buf); err != nil {
+	if err := emailviews.ReservationConfirmation(r, courtName, lockCode, cancelLink, e.domain).Render(context.Background(), &buf); err != nil {
 		return fmt.Errorf("resendEmail.SendConfirmation: render template: %w", err)
 	}
 

@@ -85,7 +85,7 @@ func GetEmailPreview(c echo.Context) error {
 		PlayerCount: 4,
 		Notes:       "Prosím o zapůjčení raket.",
 	}
-	return renderHTML(c, emailviews.ReservationConfirmation(mock, "tenisový kurt č. 1 (antuka)", "4729", "https://slavojlostice.cz/reservation/cancel/abc123"))
+	return renderHTML(c, emailviews.ReservationConfirmation(mock, "tenisový kurt č. 1 (antuka)", "4729", "https://slavojlostice.cz/reservation/cancel/abc123", "https://slavojlostice.cz"))
 }
 
 func GetHomeContent(c echo.Context) error {

@@ -1,0 +1,35 @@
+package views
+
+templ ContactError(msg string) {
+	<div class="modal-header">
+		<h5 class="modal-title">Chyba odeslání</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Zavřít">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body">
+		<p class="text-center mb-0">{ msg }</p>
+	</div>
+	<div class="modal-footer justify-content-center">
+		<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Zavřít</button>
+	</div>
+}
+
+templ ContactSuccess() {
+	<div class="modal-header">
+		<h5 class="modal-title">Zpráva odeslána</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Zavřít">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body">
+		<div class="text-center mb-0">
+			<span style="font-size: 2.5rem;">&#10003;</span>
+			<h5 class="mt-2">Vaše zpráva byla úspěšně odeslána</h5>
+			<p class="text-muted small mb-0">Děkujeme, ozveme se vám co nejdříve.</p>
+		</div>
+	</div>
+	<div class="modal-footer justify-content-center">
+		<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Zavřít</button>
+	</div>
+}

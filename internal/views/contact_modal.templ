@@ -1,0 +1,30 @@
+package views
+
+templ ContactModal() {
+<!-- Contact Modal -->
+<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="contactModalContent"></div>
+    </div>
+</div>
+
+<!-- JS: contact modal wiring -->
+<script>
+    (function () {
+        // Delegated listener so this works for every contact form on the
+        // site (footer, contacts page, ...), not just one specific form.
+        // The response is already swapped into #contactModalContent via
+        // each form's own hx-target/hx-swap before this event fires.
+        document.body.addEventListener('htmx:afterRequest', function (e) {
+            var form = e.target;
+            if (!(form instanceof HTMLFormElement)) return;
+            if (form.getAttribute('hx-post') !== '/api/contact') return;
+
+            jQuery('#contactModal').modal('show');
+            if (e.detail.successful) {
+                form.reset();
+            }
+        });
+    })();
+</script>
+}

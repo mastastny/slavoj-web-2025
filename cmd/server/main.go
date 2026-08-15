@@ -63,6 +63,7 @@ func main() {
 	emailService := resendEmail.NewEmail(conf)
 	reservationService := service.ConstructReservation(eventRepository, emailService, lockerService, linkCoder, conf.PublicDomain)
 	reservationHandler := handlers.Construct(reservationService, courts)
+	contactHandler := handlers.ConstructContact(emailService)
 	server := handlers.NewServer(eventRepository)
 
 	e := echo.New()
@@ -90,6 +91,7 @@ func main() {
 	e.GET("/api/events", server.GetEvents)
 
 	e.POST("/api/reservation", reservationHandler.PostReservation)
+	e.POST("/api/contact", contactHandler.PostContact)
 	e.GET("/api/reservation/form", handlers.GetModalBookingForm)
 	e.GET("/reservation/cancel/:encodedId", reservationHandler.DeleteReservation)
 

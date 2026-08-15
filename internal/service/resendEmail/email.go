@@ -13,13 +13,14 @@ import (
 )
 
 type Email struct {
-	client *resend.Client
-	domain string
+	client     *resend.Client
+	domain     string
+	adminEmail string
 }
 
 func NewEmail(conf config.Config) *Email {
 	client := resend.NewClient(conf.Resend.APIKey)
-	return &Email{client: client, domain: conf.PublicDomain}
+	return &Email{client: client, domain: conf.PublicDomain, adminEmail: conf.AdminEmail}
 }
 
 func (e *Email) SendConfirmation(r reservation.Service, courtName string, lockCode string, cancelLink string) error {
@@ -46,5 +47,32 @@ func (e *Email) SendConfirmation(r reservation.Service, courtName string, lockCo
 
 func (e *Email) RegisterRemainder(reservation reservation.Service) error {
 	slog.Warn("resend email service: using function RegisterRemainder which is not yet implemented. Reservation: %#v", reservation)
+	return nil
+}
+
+func (e *Email) SendContactMessage(name string, senderEmail string, subject string, message string) error {
+	if subject == "" {
+		subject = fmt.Sprintf("Zpráva z webu od %s", name)
+	}
+
+	var buf bytes.Buffer
+	if err := emailviews.ContactMessage(name, senderEmail, subject, message, e.domain).Render(context.Background(), &buf); err != nil {
+		return fmt.Errorf("resendEmail.SendContactMessage: render template: %w", err)
+	}
+
+	params := &resend.SendEmailRequest{
+		From:    "Slavoj web - kontakt <kontakt@slavojlostice.cz>",
+		To:      []string{e.adminEmail},
+		ReplyTo: senderEmail,
+		Subject: subject,
+		Html:    buf.String(),
+	}
+
+	sent, err := e.client.Emails.Send(params)
+	if err != nil {
+		return fmt.Errorf("resendEmail.SendContactMessage: send: %w", err)
+	}
+
+	slog.Info("contact message email sent", "id", sent.Id, "to", e.adminEmail)
 	return nil
 }

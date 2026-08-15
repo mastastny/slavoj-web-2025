@@ -58,7 +58,7 @@ templ Contacts() {
             </div>
             <div class="col-md-12">
                 <div class="contact-form">
-                    <form id="contact" action="" method="get">
+                    <form id="contacts-page-form" method="post" hx-post="/api/contact" hx-target="#contactModalContent" hx-swap="innerHTML">
                         <div class="row">
                             <div class="col-lg-4 col-md-12 col-sm-12">
                                 <fieldset>

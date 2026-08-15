@@ -171,7 +171,7 @@ templ Layout(title string, content templ.Component) {
             <div class="col-md-3 footer-item last-item">
                 <h4>Napište nám</h4>
                 <div class="contact-form">
-                    <form id="contact footer-contact" action="" method="post">
+                    <form id="footer-contact-form" method="post" hx-post="/api/contact" hx-target="#contactModalContent" hx-swap="innerHTML">
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-sm-12">
                                 <fieldset>
@@ -224,6 +224,8 @@ templ Layout(title string, content templ.Component) {
         </div>
     </div>
 </div>
+
+@ContactModal()
 
 <!-- Bootstrap core JavaScript -->
 <script>

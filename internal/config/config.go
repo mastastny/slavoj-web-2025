@@ -15,6 +15,7 @@ type Config struct {
 	Secure        bool   `env:"SERVER_SECURE" envDefault:"true"`
 	LinkSecretKey string `env:"LINK_SECRET_KEY" envRequired:"true"`
 	LogDebug      bool   `env:"LOG_DEBUG" envDefault:"false"`
+	AdminEmail    string `env:"ADMIN_EMAIL" envRequired:"true"`
 	Postgres      Postgres
 	Supabase      Supabase
 	Auth          Auth
@@ -29,8 +30,8 @@ type LockerService struct {
 	ClientId      string `env:"LOCKER_CLIENT_ID" envRequired:"true"`
 	RefreshToken  string `env:"LOCKER_REFRESH_TOKEN" envRequired:"true"`
 	ClientSecret  string `env:"LOCKER_CLIENT_SECRET" envRequired:"true"`
-	TokenLifespan   int    `env:"LOCKER_TOKEN_LIFESPAN" envRequired:"true"`   // days
-	RefreshWindow   int    `env:"LOCKER_REFRESH_WINDOW" envRequired:"true"`   // days
+	TokenLifespan int    `env:"LOCKER_TOKEN_LIFESPAN" envRequired:"true"` // days
+	RefreshWindow int    `env:"LOCKER_REFRESH_WINDOW" envRequired:"true"` // days
 	AccessToken   string `env:"LOCKER_ACCESS_TOKEN"`
 	BackupCode    string `env:"LOCKER_BACKUP_CODE"`
 }

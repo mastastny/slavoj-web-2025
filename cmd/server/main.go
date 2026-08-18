@@ -41,6 +41,7 @@ func main() {
 	}
 
 	var eventRepository repository.EventRepository
+	var lockerTokenRepo repository.LockerTokenRepository
 	if conf.Supabase.DatabaseURL != "" {
 		repo, err := repository.NewSupabaseEventRepository(conf.Supabase.DatabaseURL, courts)
 		if err != nil {
@@ -49,6 +50,15 @@ func main() {
 		} else {
 			eventRepository = repo
 			slog.Info("supabase event repository created")
+
+			// Requires the migrations NewSupabaseEventRepository just ran
+			// (locker_token table), so it must come after that call.
+			tokenRepo, err := repository.NewSupabaseLockerTokenRepository(conf.Supabase.DatabaseURL)
+			if err != nil {
+				slog.Warn("supabase locker token repository init failed, locker token will not persist across cold starts", "err", err)
+			} else {
+				lockerTokenRepo = tokenRepo
+			}
 		}
 	} else {
 		eventRepository = repository.NewSqliteEventRepository(courts)
@@ -57,7 +67,7 @@ func main() {
 
 	//eventRepository = repository.NewSqliteEventRepository(courts)
 
-	lockerSvc = service.NewLockerService(conf)
+	lockerSvc = service.NewLockerService(conf, lockerTokenRepo)
 	lockerService := lockerSvc
 	linkCoder := service.NewLinkCoder(conf)
 	emailService := resendEmail.NewEmail(conf)

@@ -75,6 +75,7 @@ type Auth struct {
 // recalculate all values, so everything in program is in seconds
 func (c *Config) recalculate() {
 	c.LockerService.TokenLifespan = c.LockerService.TokenLifespan * 60 * 60 * 24
+	c.LockerService.RefreshWindow = c.LockerService.RefreshWindow * 60 * 60 * 24
 
 	c.Auth.JwtLifespan = c.Auth.JwtLifespan * 60
 	c.Auth.RefreshTokenLifespan = c.Auth.RefreshTokenLifespan * 60 * 60 * 24

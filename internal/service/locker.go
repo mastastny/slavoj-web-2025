@@ -9,24 +9,83 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/avast/retry-go/v5"
 	"github.com/mastastny/slavoj-web-2025/internal/config"
+	"github.com/mastastny/slavoj-web-2025/internal/repository"
 )
 
 type LockerService struct {
-	conf         config.Config
-	client       http.Client
-	serviceStart time.Time
+	conf      config.Config
+	client    http.Client
+	tokenRepo repository.LockerTokenRepository // nil-able: no cross-cold-start persistence when nil
+
+	tokenMu       sync.Mutex
+	tokenIssuedAt time.Time // zero value means "age unknown", forces a refresh
 }
 
-func NewLockerService(conf config.Config) *LockerService {
-	return &LockerService{
-		conf:         conf,
-		client:       http.Client{},
-		serviceStart: time.Now(),
+// NewLockerService kicks off loading any persisted token from tokenRepo
+// (which may be nil, e.g. when Supabase isn't configured) in the background,
+// so the DB round trip doesn't add to Lambda init/cold-start latency for
+// requests that never touch the locker. If a request needs a token before
+// the load finishes, getAccessToken simply blocks on the same mutex - no
+// worse than doing the load synchronously here, just not on the critical
+// path when nothing needs it yet.
+func NewLockerService(conf config.Config, tokenRepo repository.LockerTokenRepository) *LockerService {
+	l := &LockerService{
+		conf:      conf,
+		client:    http.Client{},
+		tokenRepo: tokenRepo,
 	}
+	if tokenRepo != nil {
+		go l.loadPersistedToken()
+	}
+	return l
+}
+
+func (l *LockerService) loadPersistedToken() {
+	l.tokenMu.Lock()
+	defer l.tokenMu.Unlock()
+
+	// getAccessToken may have already run (and refreshed) while this
+	// goroutine was waiting for the lock - in that case the in-memory state
+	// is newer than whatever this load would find, so don't clobber it.
+	if !l.tokenIssuedAt.IsZero() {
+		return
+	}
+
+	stored, found, err := l.tokenRepo.LoadLockerToken()
+	if err != nil {
+		slog.Warn("loadPersistedToken -> cannot load persisted locker token, falling back to configured token", "err", err)
+		return
+	}
+	if found {
+		l.conf.LockerService.AccessToken = stored.AccessToken
+		l.conf.LockerService.RefreshToken = stored.RefreshToken
+		l.conf.LockerService.TokenLifespan = stored.TokenLifespan
+		l.tokenIssuedAt = stored.IssuedAt
+	}
+}
+
+// apiErrorResponse is the common error envelope used by the Sciener/TTLock
+// API. It still returns HTTP 200 on failure, so every response body must be
+// checked for a non-zero errcode.
+type apiErrorResponse struct {
+	ErrCode int    `json:"errcode"`
+	ErrMsg  string `json:"errmsg"`
+}
+
+func checkAPIError(body []byte) error {
+	var apiErr apiErrorResponse
+	if err := json.Unmarshal(body, &apiErr); err != nil {
+		return nil
+	}
+	if apiErr.ErrCode != 0 {
+		return fmt.Errorf("api error %d: %s", apiErr.ErrCode, apiErr.ErrMsg)
+	}
+	return nil
 }
 
 // todo stara funkce bude smazana
@@ -106,37 +165,72 @@ func (l *LockerService) sendPasscodeToLock(startTime time.Time, endTime time.Tim
 		return fmt.Errorf("sendPasscodeToLock -> cannot close response body: %w", err)
 	}
 	slog.Debug("sendPasscodeToLock -> response", "status", result.StatusCode, "body", string(body))
+	if apiErr := checkAPIError(body); apiErr != nil {
+		// The cached token may be the reason the lock rejected the request;
+		// invalidate it so the next retry attempt fetches a fresh one.
+		l.invalidateAccessToken()
+		return fmt.Errorf("sendPasscodeToLock -> %w", apiErr)
+	}
 	return nil
 }
 
 func (l *LockerService) getAccessToken() (string, error) {
-	if l.conf.LockerService.AccessToken == "" {
-		err := l.updateAccessToken()
-		if err != nil {
-			return "", fmt.Errorf("getAccessToken -> getting first access token failed: %w", err)
-		}
-		return l.conf.LockerService.AccessToken, nil
-	}
+	l.tokenMu.Lock()
+	defer l.tokenMu.Unlock()
+
 	lifespanDuration := time.Duration(l.conf.LockerService.TokenLifespan) * time.Second
 	refreshDuration := time.Duration(l.conf.LockerService.RefreshWindow) * time.Second
 	stablePeriod := lifespanDuration - refreshDuration
-	if (time.Since(l.serviceStart)) > stablePeriod {
-		err := l.updateAccessToken()
-		if err != nil {
-			return "", fmt.Errorf("getAccessToken -> getting first access token failed: %w", err)
+
+	// tokenIssuedAt is zero whenever we don't actually know the age of the
+	// current token (fresh process, invalidated after an API error, or a
+	// LOCKER_ACCESS_TOKEN preloaded from config of unknown age) - refresh
+	// unconditionally in that case rather than trusting it.
+	needsRefresh := l.conf.LockerService.AccessToken == "" ||
+		l.tokenIssuedAt.IsZero() ||
+		time.Since(l.tokenIssuedAt) > stablePeriod
+
+	if needsRefresh {
+		if err := l.updateAccessTokenLocked(); err != nil {
+			return "", fmt.Errorf("getAccessToken -> refreshing access token failed: %w", err)
 		}
-	} // todo bug, what if this function won't be called in refresh window?
+	}
 	return l.conf.LockerService.AccessToken, nil
 }
 
-func (l *LockerService) updateAccessToken() error {
+// invalidateAccessToken marks the cached access token as stale, forcing the
+// next getAccessToken call to fetch a new one.
+func (l *LockerService) invalidateAccessToken() {
+	l.tokenMu.Lock()
+	l.tokenIssuedAt = time.Time{}
+	l.tokenMu.Unlock()
+}
+
+// updateAccessTokenLocked must be called with tokenMu held.
+func (l *LockerService) updateAccessTokenLocked() error {
 	response, err := l.requestAccessToken()
 	if err != nil {
-		return fmt.Errorf("updateAccessToken -> request new access token failed: %w", err)
+		return fmt.Errorf("updateAccessTokenLocked -> request new access token failed: %w", err)
 	}
 	l.conf.LockerService.AccessToken = response.AccessToken
 	l.conf.LockerService.RefreshToken = response.RefreshToken
 	l.conf.LockerService.TokenLifespan = response.ExpiresIn // in seconds
+	l.tokenIssuedAt = time.Now()
+
+	if l.tokenRepo != nil {
+		err := l.tokenRepo.SaveLockerToken(repository.LockerToken{
+			AccessToken:   l.conf.LockerService.AccessToken,
+			RefreshToken:  l.conf.LockerService.RefreshToken,
+			TokenLifespan: l.conf.LockerService.TokenLifespan,
+			IssuedAt:      l.tokenIssuedAt,
+		})
+		if err != nil {
+			// Best effort: this container can still use the token it just
+			// got, but the next cold start may race with a rotated refresh
+			// token if this keeps failing.
+			slog.Warn("updateAccessTokenLocked -> cannot persist locker token", "err", err)
+		}
+	}
 	return nil
 }
 
@@ -158,13 +252,19 @@ func (l *LockerService) requestAccessToken() (tokenResponse, error) {
 		return tokenResponse{}, fmt.Errorf("requestAccessToken -> client post: %w", err)
 	}
 	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-
+		if err := Body.Close(); err != nil {
+			slog.Warn("requestAccessToken -> cannot close response body", "err", err)
 		}
 	}(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return tokenResponse{}, fmt.Errorf("requestAccessToken -> read response: %w", err)
+	}
+	if apiErr := checkAPIError(body); apiErr != nil {
+		return tokenResponse{}, fmt.Errorf("requestAccessToken -> %w", apiErr)
+	}
 	var result tokenResponse
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	if err := json.Unmarshal(body, &result); err != nil {
 		return tokenResponse{}, fmt.Errorf("requestAccessToken -> decode response: %w", err)
 	}
 	return result, nil
@@ -234,6 +334,9 @@ func (l *LockerService) getAllPasscodesFromLock() ([]passcode, error) {
 		if closeErr != nil {
 			slog.Warn("getAllPasscodesFromLock -> cannot close response body", "err", closeErr)
 		}
+		if apiErr := checkAPIError(body); apiErr != nil {
+			return nil, fmt.Errorf("getAllPasscodesFromLock -> %w", apiErr)
+		}
 		var result listKeyboardPwdResponse
 		decodeErr := json.Unmarshal(body, &result)
 		if decodeErr != nil {
@@ -267,7 +370,6 @@ func (l *LockerService) deletePasscodeFromLock(keyboardPwdId int) error {
 	if err != nil {
 		return fmt.Errorf("deletePasscodeFromLock -> cannot send request: %w", err)
 	}
-	slog.Info("deletePasscodeFromLock -> passcode deleted from lock", "pwdId", keyboardPwdId)
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		slog.Warn("deletePasscodeFromLock -> cannot read response body", "err", err)
@@ -277,5 +379,9 @@ func (l *LockerService) deletePasscodeFromLock(keyboardPwdId int) error {
 		slog.Warn("deletePasscodeFromLock -> cannot close response body", "err", err)
 	}
 	slog.Debug("deletePasscodeFromLock -> response", "status", response.StatusCode, "body", string(body))
+	if apiErr := checkAPIError(body); apiErr != nil {
+		return fmt.Errorf("deletePasscodeFromLock -> %w", apiErr)
+	}
+	slog.Info("deletePasscodeFromLock -> passcode deleted from lock", "pwdId", keyboardPwdId)
 	return nil
 }

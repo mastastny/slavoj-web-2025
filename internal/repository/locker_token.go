@@ -7,8 +7,17 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+// pgxQuerier is the subset of *pgxpool.Pool this repository needs, so it can
+// share a pool with other repositories instead of opening its own (Supabase
+// poolers cap total concurrent clients, so extra pools are expensive).
+type pgxQuerier interface {
+	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
+	Exec(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error)
+}
 
 // LockerToken is the Sciener/TTLock OAuth access+refresh token pair the
 // locker service uses to authenticate against the lock API.
@@ -32,24 +41,18 @@ type LockerTokenRepository interface {
 }
 
 type SupabaseLockerTokenRepository struct {
-	pool *pgxpool.Pool
+	pool pgxQuerier
 }
 
-// NewSupabaseLockerTokenRepository assumes the locker_token table has
-// already been migrated (NewSupabaseEventRepository runs the migrations for
-// the whole "migrations/postgres" directory, which includes it).
-func NewSupabaseLockerTokenRepository(databaseURL string) (*SupabaseLockerTokenRepository, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	pool, err := pgxpool.New(ctx, databaseURL)
-	if err != nil {
-		return nil, fmt.Errorf("NewSupabaseLockerTokenRepository: connect: %w", err)
-	}
-	if err := pool.Ping(ctx); err != nil {
-		return nil, fmt.Errorf("NewSupabaseLockerTokenRepository: ping: %w", err)
-	}
-	return &SupabaseLockerTokenRepository{pool: pool}, nil
+// NewSupabaseLockerTokenRepository takes an already-connected pool (share the
+// one NewSupabaseEventRepository opens) rather than opening its own -
+// Supabase poolers cap total concurrent clients (e.g. the session pooler at
+// 15), so a second pool per Lambda container can exhaust that budget.
+// It assumes the locker_token table has already been migrated, which
+// NewSupabaseEventRepository does for the whole "migrations/postgres"
+// directory.
+func NewSupabaseLockerTokenRepository(pool *pgxpool.Pool) *SupabaseLockerTokenRepository {
+	return &SupabaseLockerTokenRepository{pool: pool}
 }
 
 func (r *SupabaseLockerTokenRepository) LoadLockerToken() (LockerToken, bool, error) {

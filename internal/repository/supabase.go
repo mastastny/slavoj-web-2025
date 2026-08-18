@@ -35,7 +35,7 @@ type SupabaseEventRepository struct {
 	courts []models.Court
 }
 
-func NewSupabaseEventRepository(databaseURL string, courts []models.Court) (EventRepository, error) {
+func NewSupabaseEventRepository(databaseURL string, courts []models.Court) (*SupabaseEventRepository, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -68,6 +68,13 @@ func NewSupabaseEventRepository(databaseURL string, courts []models.Court) (Even
 		}
 	}
 	return &SupabaseEventRepository{pool: pool, courts: courts}, nil
+}
+
+// Pool exposes the connection pool so other repositories against the same
+// database (e.g. SupabaseLockerTokenRepository) can share it instead of
+// opening their own - Supabase poolers cap total concurrent clients.
+func (r *SupabaseEventRepository) Pool() *pgxpool.Pool {
+	return r.pool
 }
 
 func (r *SupabaseEventRepository) GetCourts() []models.Court {

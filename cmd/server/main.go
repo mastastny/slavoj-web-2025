@@ -51,14 +51,9 @@ func main() {
 			eventRepository = repo
 			slog.Info("supabase event repository created")
 
-			// Requires the migrations NewSupabaseEventRepository just ran
-			// (locker_token table), so it must come after that call.
-			tokenRepo, err := repository.NewSupabaseLockerTokenRepository(conf.Supabase.DatabaseURL)
-			if err != nil {
-				slog.Warn("supabase locker token repository init failed, locker token will not persist across cold starts", "err", err)
-			} else {
-				lockerTokenRepo = tokenRepo
-			}
+			// Shares repo's pool instead of opening a second one - Supabase
+			// poolers cap total concurrent clients.
+			lockerTokenRepo = repository.NewSupabaseLockerTokenRepository(repo.Pool())
 		}
 	} else {
 		eventRepository = repository.NewSqliteEventRepository(courts)
